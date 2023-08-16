@@ -40,7 +40,7 @@ class _RouteInitState extends State<RouteInit> {
     //initKaKaoSdk();
     //initFcm();
 
-    //스플래쉬 페이지
+    //임시 로딩 페이지
     await Future.delayed(const Duration(seconds: 2));
 
     Get.offAllNamed(keyRouteMain);

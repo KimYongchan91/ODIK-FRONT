@@ -1,10 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_routes/google_maps_routes.dart';
+import 'package:odik/custom/custom_text_style.dart';
+import 'package:odik/service/util/util_snackbar.dart';
+import 'package:odik/ui/item/item_button_admin_type.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
-import '../../my_app.dart';
+import '../../const/value/admin.dart';
+
+typedef Send = Future<http.Response> Function();
 
 class ScreenMainHome extends StatefulWidget {
   const ScreenMainHome({super.key});
@@ -14,98 +20,270 @@ class ScreenMainHome extends StatefulWidget {
 }
 
 class _ScreenMainState extends State<ScreenMainHome> {
-  Set<Marker> setMarker = {};
+  ValueNotifier<AdminType?> valueNotifierAdminType = ValueNotifier(null);
+  TextEditingController textEditingControllerBodyContent = TextEditingController();
 
-  final Completer<GoogleMapController> googleMapController = Completer<GoogleMapController>();
-
-  List<LatLng> listLatLng = const [
-    LatLng(37.57583704337702, 126.9768261909485), //광화문 37.57583704337702, 126.9768261909485
-    LatLng(37.552130864521686, 126.987361907959), //남산타워 37.552130864521686, 126.987361907959
-  ];
-
-  //애월 33.468582299688016, 126.31353735923769
-  MapsRoutes route = new MapsRoutes();
-  DistanceCalculator distanceCalculator = new DistanceCalculator();
-  String googleApiKey = 'AIzaSyDeGTGjfDq6K5qFJXEXz2qvthzNNLM2zXU';
-  String totalDistance = 'No route';
+  ValueNotifier<bool> valueNotifierIsProcessingSend = ValueNotifier(false);
+  ValueNotifier<String> valueNotifierResponse = ValueNotifier("");
 
   @override
   void initState() {
     super.initState();
-
-    List<Future> listFutureLoadMarkerImage = [];
-
-    listFutureLoadMarkerImage.add(BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(60, 45)),
-      "asset/image/sample/resize_202208291317416161.jpg",
-    ).then((value) {
-      setMarker.add(Marker(
-        markerId: MarkerId("1"),
-        position: listLatLng[0],
-        icon: value,
-      ));
-    }));
-
-    listFutureLoadMarkerImage.add(BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(60, 45)),
-      "asset/image/sample/resize_201512141830100478_d.jpg",
-    ).then((value) {
-      setMarker.add(Marker(
-        markerId: MarkerId("2"),
-        position: listLatLng[1],
-        icon: value,
-      ));
-    }));
-
-    Future.wait(listFutureLoadMarkerImage).then((value) {
-      setState(() {});
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 20,
-        ),
-        SizedBox(
-          height: 300,
-          child: GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: LatLng((listLatLng[0].latitude + listLatLng[1].latitude) / 2,
-                  (listLatLng[0].longitude + listLatLng[1].longitude) / 2),
-              zoom: 13,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 20,
             ),
-            onMapCreated: (controller) {
-              googleMapController.complete(controller);
-            },
-            markers: setMarker,
-            polylines: route.routes,
-          ),
+            const Text(
+              '관리자 계정 선택',
+              style: CustomTextStyle.normalBlackBold(),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ValueListenableBuilder(
+              valueListenable: valueNotifierAdminType,
+              builder: (context, value, child) => Wrap(
+                children: [
+                  ...AdminType.values.map((e) => InkWell(
+                      onTap: () {
+                        _onTapButtonAdminType(e);
+                      },
+                      child: ItemButtonAdminType(adminType: e, isSelected: e == value)))
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                const Text(
+                  'body 내용',
+                  style: CustomTextStyle.normalBlackBold(),
+                ),
+                Spacer(),
+                const Text(
+                  'body의 content 이름으로 전송',
+                  style: CustomTextStyle.normalGrey(),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextField(
+              controller: textEditingControllerBodyContent,
+              minLines: 4,
+              maxLines: 4,
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ValueListenableBuilder(
+              valueListenable: valueNotifierIsProcessingSend,
+              builder: (context, value, child) => ElevatedButton(
+                onPressed: _send,
+                child: value ? LoadingAnimationWidget.inkDrop(color: Colors.white, size: 20) : Text('전송'),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'response 결과',
+              style: CustomTextStyle.normalBlackBold(),
+            ),
+            ValueListenableBuilder(
+              valueListenable: valueNotifierResponse,
+              builder: (context, value, child) => Text(value),
+            ),
+          ],
         ),
-        ElevatedButton(
-          onPressed: () async {
-            try {
-              await route.drawRoute(
-                  listLatLng, 'Test routes', Color.fromRGBO(130, 78, 210, 1.0), googleApiKey,
-                  travelMode: TravelModes.walking);
-
-              setState(() {
-                totalDistance = distanceCalculator.calculateRouteDistance(listLatLng, decimals: 1);
-              });
-            } catch (e) {
-              MyApp.logger.wtf("오류 발생 : ${e.toString()}");
-
-              setState(() {
-                totalDistance = "경로 없음";
-              });
-            }
-          },
-          child: Text('경로 찾기'),
-        ),
-        Text('총 경로 : ${totalDistance}')
-      ],
+      ),
     );
+  }
+
+  _send() async {
+    if (valueNotifierAdminType.value == null) {
+      showSnackBarOnRoute('관리자를 선택해 주세요!!');
+      return;
+    }
+
+    if (valueNotifierIsProcessingSend.value) {
+      return;
+    }
+
+    valueNotifierIsProcessingSend.value = true;
+
+    Send send;
+    switch (valueNotifierAdminType.value) {
+      case AdminType.kke:
+        send = _sendByKke;
+
+      case AdminType.kse:
+        send = _sendByKse;
+
+      case AdminType.kyc:
+        send = _sendByKyc;
+
+      case AdminType.syh:
+        send = _sendBySyh;
+
+      default:
+        send = _sendByDefault;
+    }
+
+    http.Response response = await send();
+
+    //결과 받아 와서 화면에 표시
+    valueNotifierResponse.value = '응답 status code : ${response.statusCode}\n'
+        '응답 body : \n'
+        '${response.body}';
+
+    valueNotifierIsProcessingSend.value = false;
+  }
+
+  ///todo 경은님 코드 부분
+  ///url부분을 변경해보세요.
+  Future<http.Response> _sendByKke() async {
+    //입력된 데이터를 담은 body
+    //현재 content 값에는 키보드로 입력받은 데이터가 들어있습니다.
+    //필요할 경우 다양한 값 추가 가능
+    Map data = {
+      'content': textEditingControllerBodyContent.text, //키보드 입력값
+      'title': '테스트',
+      'userId': 5,
+      //'key2' : 'value2',
+    };
+
+    //body를 string으로 인코드
+    String body = json.encode(data);
+
+    //데이터를 보낼 url
+    String url = 'https://dummyjson.com/posts/add';
+
+    //상위 함수에 데이터 결과 전달
+    //제한 시간 10초
+    return await http
+        .post(Uri.parse(url), headers: {"Content-Type": "application/json"}, body: body)
+        .timeout(const Duration(seconds: 10));
+  }
+
+  ///todo 승은님 코드 부분
+  Future<http.Response> _sendByKse() async {
+    //입력된 데이터를 담은 body
+    //현재 content 값에는 키보드로 입력받은 데이터가 들어있습니다.
+    //필요할 경우 다양한 값 추가 가능
+    Map data = {
+      'content': textEditingControllerBodyContent.text, //키보드 입력값
+      'title': '테스트',
+      'userId': 5,
+      //'key2' : 'value2',
+    };
+
+    //body를 string으로 인코드
+    String body = json.encode(data);
+
+    //데이터를 보낼 url
+    String url = 'https://dummyjson.com/posts/add';
+
+    //상위 함수에 데이터 결과 전달
+    //제한 시간 10초
+    return await http
+        .post(Uri.parse(url), headers: {"Content-Type": "application/json"}, body: body)
+        .timeout(const Duration(seconds: 10));
+  }
+
+  ///todo 용찬님 코드 부분
+  Future<http.Response> _sendByKyc() async {
+    //입력된 데이터를 담은 body
+    //현재 content 값에는 키보드로 입력받은 데이터가 들어있습니다.
+    //필요할 경우 다양한 값 추가 가능
+    Map data = {
+      'content': textEditingControllerBodyContent.text, //키보드 입력값
+      'title': '테스트',
+      'userId': 5,
+      //'key2' : 'value2',
+    };
+
+    //body를 string으로 인코드
+    String body = json.encode(data);
+
+    //데이터를 보낼 url
+    String url = 'https://dummyjson.com/posts/add';
+
+    //상위 함수에 데이터 결과 전달
+    //제한 시간 10초
+    return await http
+        .post(Uri.parse(url), headers: {"Content-Type": "application/json"}, body: body)
+        .timeout(const Duration(seconds: 10));
+  }
+
+  ///todo 연화님 코드 부분
+  Future<http.Response> _sendBySyh() async {
+    //입력된 데이터를 담은 body
+    //현재 content 값에는 키보드로 입력받은 데이터가 들어있습니다.
+    //필요할 경우 다양한 값 추가 가능
+    Map data = {
+      'content': textEditingControllerBodyContent.text, //키보드 입력값
+      'title': '테스트',
+      'userId': 5,
+      //'key2' : 'value2',
+    };
+
+    //body를 string으로 인코드
+    String body = json.encode(data);
+
+    //데이터를 보낼 url
+    String url = 'https://dummyjson.com/posts/add';
+
+    //상위 함수에 데이터 결과 전달
+    //제한 시간 10초
+    return await http
+        .post(Uri.parse(url), headers: {"Content-Type": "application/json"}, body: body)
+        .timeout(const Duration(seconds: 10));
+  }
+
+  ///todo 선택 안했을 경우 코드 부분
+  Future<http.Response> _sendByDefault() async {
+    //입력된 데이터를 담은 body
+    //현재 content 값에는 키보드로 입력받은 데이터가 들어있습니다.
+    //필요할 경우 다양한 값 추가 가능
+    Map data = {
+      'content': textEditingControllerBodyContent.text, //키보드 입력값
+      'title': '테스트',
+      'userId': 5,
+      //'key2' : 'value2',
+    };
+
+    //body를 string으로 인코드
+    String body = json.encode(data);
+
+    //데이터를 보낼 url
+    String url = 'https://dummyjson.com/posts/add';
+
+    //상위 함수에 데이터 결과 전달
+    //제한 시간 10초
+    return await http
+        .post(Uri.parse(url), headers: {"Content-Type": "application/json"}, body: body)
+        .timeout(const Duration(seconds: 10));
+  }
+
+  _onTapButtonAdminType(AdminType adminType) {
+    if (valueNotifierAdminType.value == adminType) {
+      valueNotifierAdminType.value = null;
+    } else {
+      valueNotifierAdminType.value = adminType;
+    }
   }
 }

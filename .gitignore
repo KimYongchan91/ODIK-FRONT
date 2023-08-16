@@ -25,7 +25,7 @@ lib/generated_plugin_registrant.dart
 **/android/captures/
 **/android/gradlew
 **/android/gradlew.bat
-**/android/key.properties
+#**/android/key.properties #임시로 허가
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 
@@ -113,7 +113,7 @@ captures/
 *.swp
 
 # Keystore files
-*.jks
+#*.jks #임시로 허가
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
