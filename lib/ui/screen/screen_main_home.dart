@@ -146,7 +146,8 @@ class _ScreenMainState extends State<ScreenMainHome> {
     http.Response response = await send();
 
     //결과 받아 와서 화면에 표시
-    valueNotifierResponse.value = '응답 status code : ${response.statusCode}\n'
+    valueNotifierResponse.value = '응답 status code : \n'
+        '${response.statusCode}\n\n'
         '응답 body : \n'
         '${response.body}';
 
