@@ -114,7 +114,7 @@ captures/
 
 # Keystore files
 #*.jks #임시로 허가
-*.keystore
+#*.keystore #임시로 허가
 
 # Google Services (e.g. APIs or Firebase)
 # google-services.json
