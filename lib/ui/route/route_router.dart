@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:odik/ui/route/route_init.dart';
+import 'package:odik/ui/route/route_join.dart';
+import 'package:odik/ui/route/route_login.dart';
 
 import '../../const/value/router.dart';
 import 'route_main.dart';
@@ -37,15 +39,20 @@ class RouteRouter extends StatelessWidget {
           name: keyRouteMain,
           page: () => const RouteMain(),
         ),
-
-       /* GetPage(
-          name: keyRouteUnknown,
-          page: () => const RouteUnknown(),
-        ),
         GetPage(
           name: keyRouteLogin,
           page: () => const RouteLogin(),
         ),
+
+        GetPage(
+          name: keyRouteJoin,
+          page: () => const RouteJoin(),
+        ),
+        /* GetPage(
+          name: keyRouteUnknown,
+          page: () => const RouteUnknown(),
+        ),
+
         GetPage(
           name: keyRouteSiteNew,
           page: () => const RouteSiteNew(),

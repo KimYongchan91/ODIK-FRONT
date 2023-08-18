@@ -6,10 +6,14 @@ class CustomTextField extends TextField {
     void Function(String)? onChanged,
     String? hintText,
     TextEditingController? controller,
+    bool? enabled,
+    bool readOnly = false,
   }) : super(
           key: key,
           maxLines: 1,
           controller: controller,
+          enabled: enabled,
+          readOnly: readOnly,
           decoration: InputDecoration(
               border: const OutlineInputBorder(
                 borderSide: BorderSide.none,
