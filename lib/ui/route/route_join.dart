@@ -176,13 +176,17 @@ class _RouteJoinState extends State<RouteJoin> {
           .post(Uri.parse(url), headers: {"Content-Type": "application/json"}, body: body)
           .timeout(const Duration(seconds: 10));
 
-      //응답결과 중 body
+      //응답결과 중 body를 json형태로 파싱
       final dataResponse = jsonDecode(response.body);
 
       //test
 /*
       final dataResponse = {keyResult: keySend, keyToken: "x1xd24e"};
 */
+
+      //body 로그 찍기
+      MyApp.logger.d("인증번호 요청 응답 결과\n"
+          "${dataResponse.toString()}");
 
       //인증번호가 발송되었다면
       if (dataResponse[keyResult] == keySend) {
@@ -244,20 +248,23 @@ class _RouteJoinState extends State<RouteJoin> {
           .post(Uri.parse(url), headers: {"Content-Type": "application/json"}, body: body)
           .timeout(const Duration(seconds: 10));
 
-      //응답결과 중 body
+      //응답결과 중 body를 json형태로 파싱
       final dataResponse = jsonDecode(response.body);
 
       //test
 /*
       final dataResponse = {keyResult: keyOk, keyEmail: "abc@gmail.com", keyToken: "x1xd24e"};
 */
+      //body 로그 찍기
+      MyApp.logger.d("인증번호 확인 응답 결과\n"
+          "${dataResponse.toString()}");
 
-      //인증번호가 발송되었다면
+      //인증번호가 맞다면
       if (dataResponse[keyResult] == keyOk) {
         showSnackBarOnRoute("e메일로 인증에 성공했어요.");
         valueNotifierEmailVerifyStateType.value = EmailVerifyStateType.ok;
 
-        //이미 존재하는 email이라면
+        //인증번호가 틀리다면
       } else if (dataResponse[keyResult] == keyWrongCode) {
         showSnackBarOnRoute("잘못된 인증번호예요.");
 
