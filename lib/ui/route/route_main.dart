@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:odik/ui/screen/screen_main_home.dart';
-import 'package:odik/ui/screen/screen_main_my_tour.dart';
+import 'package:odik/ui/screen/screen_main_map.dart';
 import 'package:odik/ui/screen/screen_main_profile.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -30,7 +30,7 @@ class _RouteMainState extends State<RouteMain> {
   int timeBackButtonPressed = 0;
   FToast fToast = FToast();
 
-  List<IconData> listIconNavigationBar = [Icons.home, Icons.card_membership, Icons.person];
+  List<IconData> listIconNavigationBar = [Icons.home, Icons.map, Icons.person];
   ValueNotifier<int> valueNotifierIndexPage = ValueNotifier(0);
 
   @override
@@ -53,7 +53,7 @@ class _RouteMainState extends State<RouteMain> {
               index: value,
               children: const [
                 ScreenMainHome(),
-                ScreenMainMyTour(),
+                ScreenMainMap(),
                 ScreenMainProfile(),
               ],
             ),
