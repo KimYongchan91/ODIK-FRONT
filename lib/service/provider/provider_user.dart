@@ -16,7 +16,10 @@ class ProviderUser extends ChangeNotifier {
 
   ///이메일 로그인
   Future<bool> loginWithEmail(String email, String pss) async {
-    String url = 'https://odik.link/auth/sign';
+
+    //String url = 'https://odik.link/auth/sign';
+    //todo test
+    String url = "https://amwtk4tu2gqicrkprwhruqwpgm0zjgot.lambda-url.us-east-1.on.aws/";
     Map data = {
       keyEmail: email,
       keyPss: pss,
@@ -46,7 +49,7 @@ class ProviderUser extends ChangeNotifier {
   }
 
   ///자동 로그인
-  _loginWithAuto() async {
+  loginWithAuto() async {
     String? data = await flutterSecureStorage.read(key: keyUserLastLogin);
 
     //기존에 로그인 정보가 있음
@@ -60,6 +63,8 @@ class ProviderUser extends ChangeNotifier {
   }
 
   _checkIsValidAccount() async {
+    //재 인증 url
+    //header 데이터만으로 인증 여부 확인
     String url = 'https://odik.link/auth/sign';
     Map data = {};
 
@@ -69,6 +74,8 @@ class ProviderUser extends ChangeNotifier {
       //로그인 성공
       if (response[keyResult] == keyValid) {
         //아무 작업도 하지 않음
+        //딱히?
+
 
         //로그인 실패
       } else {

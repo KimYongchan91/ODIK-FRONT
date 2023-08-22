@@ -3,6 +3,7 @@ import 'package:odik/const/value/router.dart';
 import 'package:odik/service/provider/provider_user.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
+import '../../custom/custom_text_style.dart';
 import '../../my_app.dart';
 
 class ScreenMainProfile extends StatefulWidget {
@@ -26,12 +27,16 @@ class _ScreenMainState extends State<ScreenMainProfile> {
               children: [
                 Consumer<ProviderUser>(
                   builder: (context, value, child) => value.modelUser != null
-                      ? Text(value.modelUser!.id)
+                      ? Text(
+                          value.modelUser!.id,
+                          style: const CustomTextStyle.bigBlackBold(),
+                        )
                       : ElevatedButton(
                           onPressed: () {
                             Get.toNamed(keyRouteLogin);
                           },
-                          child: Text('로그인')),
+                          child: const Text('로그인'),
+                        ),
                 ),
               ],
             ),

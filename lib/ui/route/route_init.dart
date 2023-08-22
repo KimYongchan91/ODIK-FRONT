@@ -59,7 +59,7 @@ class _RouteInitState extends State<RouteInit> {
   }
 
   initLogin() {
-    //MyApp.providerUser.loginAuto();
+    MyApp.providerUser.loginWithAuto();
   }
 
   initKaKaoSdk() {
