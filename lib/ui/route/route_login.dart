@@ -5,6 +5,8 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../custom/custom_text_field.dart';
+import '../../my_app.dart';
+import '../../service/util/util_snackbar.dart';
 
 class RouteLogin extends StatefulWidget {
   const RouteLogin({super.key});
@@ -50,9 +52,7 @@ class _RouteLoginState extends State<RouteLogin> {
                   valueListenable: valueNotifierIsProcessingLoginWithEmail,
                   builder: (context, value, child) => ElevatedButton(
                     onPressed: _loginWithEmail,
-                    child: value
-                        ? LoadingAnimationWidget.inkDrop(color: Colors.white, size: 20)
-                        : const Text('로그인'),
+                    child: value ? LoadingAnimationWidget.inkDrop(color: Colors.white, size: 20) : const Text('로그인'),
                   ),
                 ),
                 const SizedBox(
@@ -97,5 +97,34 @@ class _RouteLoginState extends State<RouteLogin> {
     );
   }
 
-  _loginWithEmail() async {}
+  ///todo 이메일 로그인
+  _loginWithEmail() async {
+    if (valueNotifierIsProcessingLoginWithEmail.value || valueNotifierIsProcessingLoginWithGoogle.value) {
+      return;
+    }
+
+    if (textEditingControllerId.text.isEmpty) {
+      showSnackBarOnRoute('e메일을 입력해 주세요.');
+      return;
+    }
+
+    if (textEditingControllerPss.text.isEmpty) {
+      showSnackBarOnRoute('비밀번호를 입력해 주세요.');
+      return;
+    }
+
+    valueNotifierIsProcessingLoginWithEmail.value = true;
+
+    //실제 로그인 구현부
+    bool isSuccessLogin =
+        await MyApp.providerUser.loginWithEmail(textEditingControllerId.text, textEditingControllerPss.text);
+
+
+    valueNotifierIsProcessingLoginWithEmail.value = false;
+
+    //로그인 성공
+    if (isSuccessLogin) {
+      Get.back();
+    }
+  }
 }

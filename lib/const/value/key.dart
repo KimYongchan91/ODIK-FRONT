@@ -1,3 +1,4 @@
+const String keyAuthorization = 'Authorization';
 const String keyTokenOdik = "tokenOdik";
 const String keyId = "id";
 const String keyLoginType = "login_type";
@@ -5,6 +6,10 @@ const String keyNickName = "nick_name";
 const String keyGender = "gender";
 const String keyDateJoin = "date_join";
 const String keyState = "state";
+const String keyPss = "pss";
+const String keyUserLastLogin = "user_last_login";
+
+
 
 const String keyEmail = "email";
 const String keyGoogle = "google";

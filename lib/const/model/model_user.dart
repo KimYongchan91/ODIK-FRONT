@@ -19,4 +19,17 @@ class ModelUser {
         userGender = getUserGender(json[keyGender]),
         dateJoin = json[keyDateJoin] ?? DateTime.now(),
         userState = getUserState(json[keyState]);
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> result = {
+      keyId: id,
+      keyLoginType: userLoginType.toString().split(".").last,
+      keyNickName: nickName,
+      keyGender: userGender.toString().split(".").last,
+      keyDateJoin: dateJoin,
+      keyState: userState.toString().split(".").last,
+    };
+
+    return result;
+  }
 }
