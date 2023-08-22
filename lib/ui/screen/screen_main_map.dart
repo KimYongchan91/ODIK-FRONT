@@ -80,7 +80,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
                           isDense: false,
                           fillColor: Colors.transparent,
                           filled: false,
-                          prefixIcon: Icon(Icons.search, color: colorPrimary),
+                          prefixIcon: const Icon(Icons.search, color: colorPrimary),
                           suffixIcon: InkWell(
                               onTap: () {
                                 setState(() {
@@ -100,22 +100,29 @@ class _ScreenMainState extends State<ScreenMainMap> {
                           disabledBorder: InputBorder.none,
                         )),
                     itemBuilder: (context, ModelPlaceAutoComplete modelPlaceAutoComplete) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.location_on_outlined,
-                              size: 18,
-                              color: Colors.grey,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [const Divider()],
-                            ),
-                            Text(modelPlaceAutoComplete.title)
-                          ],
+                      return InkWell(
+                        onTap: () {
+                          _showDetailModelPlaceAutoComplete(modelPlaceAutoComplete);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                size: 18,
+                                color: Colors.grey,
+                              ),
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Divider(),
+                                ],
+                              ),
+                              Text(modelPlaceAutoComplete.title)
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -264,21 +271,56 @@ class _ScreenMainState extends State<ScreenMainMap> {
     List listData = data["predictions"];
     //MyApp.logger.d("원본 리스트 개수 : ${listData.length}");
 
-
     for (var element in listData) {
-      ModelPlaceAutoComplete  modelPlaceAutoComplete=
-          ModelPlaceAutoComplete(title: element["structured_formatting"]["main_text"]);
+      ModelPlaceAutoComplete modelPlaceAutoComplete = ModelPlaceAutoComplete(
+          title: element["structured_formatting"]["main_text"], reference: element['reference']);
       listPlaceAutoComplete.add(modelPlaceAutoComplete);
     }
 
-    //MyApp.logger.d("리스트 개수 : ${listPlaceAutoComplete.length}");
+    //MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.length}");
+    MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.toString()}");
 
     return listPlaceAutoComplete;
+  }
+
+  _showDetailModelPlaceAutoComplete(ModelPlaceAutoComplete modelPlaceAutoComplete) async {
+    /*
+    https://maps.googleapis.com/maps/api/place/details/json
+    ?fields=name%2Crating%2Cformatted_phone_number
+    &place_id=ChIJN1t_tDeuEmsRUsoyG83frY4
+    &key=YOUR_API_KEY
+    */
+
+    String url =
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=${modelPlaceAutoComplete.reference}'
+        '&language=ko&key=AIzaSyDeGTGjfDq6K5qFJXEXz2qvthzNNLM2zXU';
+
+    MyApp.logger.d("url : $url");
+
+    http.Response response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
+
+    final Pattern unicodePattern = RegExp(r'\\u([0-9A-Fa-f]{4})');
+    final String newStr = response.body.replaceAllMapped(unicodePattern, (Match unicodeMatch) {
+      final int hexCode = int.parse(unicodeMatch.group(1)!, radix: 16);
+      final unicode = String.fromCharCode(hexCode);
+      return unicode;
+    });
+
+    MyApp.logger.d("응답 결과 : $newStr");
   }
 }
 
 class ModelPlaceAutoComplete {
   final String title;
+  final String reference;
 
-  ModelPlaceAutoComplete({required this.title});
+  ModelPlaceAutoComplete({required this.title, required this.reference});
+
+  @override
+  String toString() {
+    return '''
+title : $title 
+reference : $reference   
+''';
+  }
 }

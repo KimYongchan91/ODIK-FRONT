@@ -3,6 +3,7 @@ import 'package:odik/const/value/user.dart';
 import 'package:odik/service/util/util_user.dart';
 
 class ModelUser {
+  final String tokenOdik;
   final String id;
   final UserLoginType userLoginType;
   final String? nickName;
@@ -11,7 +12,8 @@ class ModelUser {
   final UserState userState;
 
   ModelUser.fromJson(Map<String, dynamic> json)
-      : id = json[keyId] ?? '',
+      : tokenOdik = json[keyTokenOdik] ?? '',
+        id = json[keyId] ?? '',
         userLoginType = getUserLoginType(json[keyLoginType]),
         nickName = json[keyNickName],
         userGender = getUserGender(json[keyGender]),

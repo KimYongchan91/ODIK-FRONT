@@ -1,3 +1,4 @@
+const String keyTokenOdik = "tokenOdik";
 const String keyId = "id";
 const String keyLoginType = "login_type";
 const String keyNickName = "nick_name";
