@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_debounce/easy_debounce.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:odik/const/value/test.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -180,11 +181,17 @@ class _ScreenMainState extends State<ScreenMainMap> {
                   height: 400,
                   child: Column(
                     children: [
+                      ///이미지
                       CachedNetworkImage(
                         imageUrl: value.urlImage ?? '',
                         width: Get.width,
                         errorWidget: (context, url, error) => Icon(Icons.error),
-                        //placeholder: (context, url) => Center(child: Loadinga,),
+                        placeholder: (context, url) => Center(
+                          child: LoadingAnimationWidget.inkDrop(
+                            color: colorPrimary,
+                            size: 24,
+                          ),
+                        ),
                       ),
                     ],
                   ),
