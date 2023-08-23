@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:odik/const/value/key.dart';
 import 'package:odik/const/value/key_user.dart';
+import 'package:odik/const/value/test.dart';
 import 'package:odik/custom/custom_text_field.dart';
 import 'package:http/http.dart' as http;
 import 'package:odik/service/util/util_snackbar.dart';
@@ -168,7 +169,7 @@ class _RouteJoinState extends State<RouteJoin> {
     String body = json.encode(dataRequest);
 
     //데이터를 보낼 url
-    String url = 'https://odik.link/auth/email_verify/request';
+    String url = '$urlBaseTest/auth/email_verify/request';
 
     try {
       //응답결과 객체

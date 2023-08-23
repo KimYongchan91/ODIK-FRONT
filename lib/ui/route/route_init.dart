@@ -36,7 +36,7 @@ class _RouteInitState extends State<RouteInit> {
     );*/
 
     //initDeepLink();
-    //initLogin();
+    initLoginAuto();
     //initKaKaoSdk();
     //initFcm();
 
@@ -58,7 +58,7 @@ class _RouteInitState extends State<RouteInit> {
     }*/
   }
 
-  initLogin() {
+  initLoginAuto() {
     MyApp.providerUser.loginWithAuto();
   }
 

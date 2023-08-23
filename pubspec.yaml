@@ -114,6 +114,7 @@ dev_dependencies:
   fluttertoast: ^8.2.2
   flutter_naver_login: ^1.8.0
   flutter_secure_storage: ^8.0.0
+  mini_server: ^1.1.0
 
 
   firebase_analytics: ^10.4.3

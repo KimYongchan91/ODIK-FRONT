@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import '../../custom/custom_text_style.dart';
 import '../../my_app.dart';
+import '../widget/button_standard.dart';
 
 class ScreenMainProfile extends StatefulWidget {
   const ScreenMainProfile({super.key});
@@ -24,18 +25,29 @@ class _ScreenMainState extends State<ScreenMainProfile> {
         builder: (context, child) => SafeArea(
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 20, left: 20),
+                  child: Text(
+                    '프로필',
+                    style: CustomTextStyle.bigBlackBold(),
+                  ),
+                ),
                 Consumer<ProviderUser>(
                   builder: (context, value, child) => value.modelUser != null
                       ? Text(
                           value.modelUser!.id,
                           style: const CustomTextStyle.bigBlackBold(),
                         )
-                      : ElevatedButton(
-                          onPressed: () {
-                            Get.toNamed(keyRouteLogin);
-                          },
-                          child: const Text('로그인'),
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: ButtonStandard(
+                            onTap: () {
+                              Get.toNamed(keyRouteLogin);
+                            },
+                            label: '로그인',
+                          ),
                         ),
                 ),
               ],

@@ -15,9 +15,9 @@ UserLoginType getUserLoginType(String? loginType) {
 }
 
 UserGender getUserGender(String? gender) {
-  if (gender == keyMale) {
+  if (gender == keyMale || gender == keyMale2) {
     return UserGender.male;
-  } else if (gender == keyFemale) {
+  } else if (gender == keyFemale || gender == keyFemale2) {
     return UserGender.female;
   } else {
     return UserGender.error;

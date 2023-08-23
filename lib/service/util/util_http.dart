@@ -21,6 +21,9 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
     header[keyAuthorization] = MyApp.providerUser.modelUser!.tokenOdik;
   }
 
+  MyApp.logger.d("요청 header : $header\n"
+      "요청 body : $requestBody");
+
   http.Response response =
       await http.post(Uri.parse(url), headers: header, body: requestBody).timeout(const Duration(seconds: 10));
 

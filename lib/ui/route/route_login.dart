@@ -52,8 +52,17 @@ class _RouteLoginState extends State<RouteLogin> {
                   valueListenable: valueNotifierIsProcessingLoginWithEmail,
                   builder: (context, value, child) => ElevatedButton(
                     onPressed: _loginWithEmail,
-                    child: value ? LoadingAnimationWidget.inkDrop(color: Colors.white, size: 20) : const Text('로그인'),
+                    child: value
+                        ? LoadingAnimationWidget.inkDrop(color: Colors.white, size: 20)
+                        : const Text('로그인'),
                   ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    textEditingControllerId.text = 'kimse990507@gmail.com';
+                    textEditingControllerPss.text = 'kimse990507';
+                  },
+                  child: Text('승은님 정보 입력'),
                 ),
                 const SizedBox(
                   height: 20,
@@ -118,7 +127,6 @@ class _RouteLoginState extends State<RouteLogin> {
     //실제 로그인 구현부
     bool isSuccessLogin =
         await MyApp.providerUser.loginWithEmail(textEditingControllerId.text, textEditingControllerPss.text);
-
 
     valueNotifierIsProcessingLoginWithEmail.value = false;
 
