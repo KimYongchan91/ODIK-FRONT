@@ -59,10 +59,10 @@ class _RouteLoginState extends State<RouteLogin> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    textEditingControllerId.text = 'kimse990507@gmail.com';
-                    textEditingControllerPss.text = 'kimse990507';
+                    textEditingControllerId.text = 'yczinetest@naver.com';
+                    textEditingControllerPss.text = '123123asd!';
                   },
-                  child: Text('승은님 정보 입력'),
+                  child: Text('테스트 계정 정보 입력'),
                 ),
                 const SizedBox(
                   height: 20,

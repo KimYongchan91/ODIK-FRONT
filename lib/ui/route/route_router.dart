@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:odik/ui/route/route_cart.dart';
 import 'package:odik/ui/route/route_init.dart';
 import 'package:odik/ui/route/route_join.dart';
 import 'package:odik/ui/route/route_login.dart';
@@ -43,15 +44,15 @@ class RouteRouter extends StatelessWidget {
           name: keyRouteLogin,
           page: () => const RouteLogin(),
         ),
-
         GetPage(
           name: keyRouteJoin,
           page: () => const RouteJoin(),
         ),
-        /* GetPage(
-          name: keyRouteUnknown,
-          page: () => const RouteUnknown(),
+        GetPage(
+          name: keyRouteCart,
+          page: () => const RouteCart(),
         ),
+        /*
 
         GetPage(
           name: keyRouteSiteNew,

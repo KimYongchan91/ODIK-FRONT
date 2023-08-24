@@ -1,5 +1,5 @@
 import 'package:odik/const/value/key.dart';
-import 'package:odik/const/value/user.dart';
+import 'package:odik/const/value/enum_user.dart';
 import 'package:odik/service/util/util_user.dart';
 
 import '../../service/util/util_date_time.dart';

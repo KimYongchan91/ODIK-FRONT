@@ -1,6 +1,6 @@
 import 'package:odik/const/value/key.dart';
 
-import '../../const/value/user.dart';
+import '../../const/value/enum_user.dart';
 
 UserLoginType getUserLoginType(String? loginType) {
   if (loginType == keyEmail) {

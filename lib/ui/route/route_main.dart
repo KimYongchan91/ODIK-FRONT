@@ -9,6 +9,7 @@ import 'package:chaleno/chaleno.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:odik/const/value/router.dart';
 import 'package:odik/ui/screen/screen_main_home.dart';
 import 'package:odik/ui/screen/screen_main_map.dart';
 import 'package:odik/ui/screen/screen_main_profile.dart';
@@ -69,7 +70,9 @@ class _RouteMainState extends State<RouteMain> {
           ///플로팅 액션 버튼
           floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.orange,
-            onPressed: () async {},
+            onPressed: () async {
+              Get.toNamed(keyRouteCart);
+            },
             child: AddToCartIcon(
               key: MyApp.keyCart,
               icon: const Icon(Icons.card_travel),

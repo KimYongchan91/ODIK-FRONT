@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:odik/const/value/place.dart';
 import 'package:odik/const/value/test.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:odik/custom/custom_text_style.dart';
@@ -20,6 +21,7 @@ import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import '../../const/model/place/model_place.dart';
 import '../../const/model/place/model_place_auto_complete.dart';
 import '../../my_app.dart';
+import 'dart:developer';
 
 const Color colorPrimary = Colors.orange;
 double sizeImageGoogleMap = 80;
@@ -35,7 +37,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
   BitmapDescriptor? currentLocation;
   TextEditingController placeController = TextEditingController();
 
-  final Completer<GoogleMapController> googleMapController = Completer<GoogleMapController>();
+  late final GoogleMapController googleMapController;
   LatLng latLngDefault =
       const LatLng(37.57583704337702, 126.9768261909485); //광화문 37.57583704337702, 126.9768261909485
 
@@ -53,9 +55,8 @@ class _ScreenMainState extends State<ScreenMainMap> {
             zoomControlsEnabled: false,
             initialCameraPosition: CameraPosition(zoom: 16, target: latLngDefault),
             onMapCreated: (controller) async {
-              setState(() {
-                googleMapController.complete(controller);
-              });
+              googleMapController = controller;
+
               /* String val = "json/google_map_dark_light.json";
               var c = await rootBundle.loadString(val);
               _controller.setMapStyle(c);*/
@@ -272,8 +273,12 @@ class _ScreenMainState extends State<ScreenMainMap> {
                           Expanded(
                             flex: 1,
                             child: InkWell(
+                              ///장바구니에 추가
                               onTap: () async {
                                 await MyApp.runAddToCartAnimation(MyApp.keyButtonAddCart);
+
+                                MyApp.providerCart.addPlace(valueNotifierModelPlace.value!);
+
                               },
                               child: Card(
                                 child: Stack(
@@ -380,7 +385,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
 
     for (var element in listData) {
       ModelPlaceAutoComplete modelPlaceAutoComplete = ModelPlaceAutoComplete(
-          title: element["structured_formatting"]["main_text"], reference: element['reference']);
+          title: element["structured_formatting"]["main_text"], referenceId: element['reference']);
       listPlaceAutoComplete.add(modelPlaceAutoComplete);
     }
 
@@ -399,7 +404,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
     */
 
     String url =
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=${modelPlaceAutoComplete.reference}'
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=${modelPlaceAutoComplete.referenceId}'
         '&language=ko&key=AIzaSyDeGTGjfDq6K5qFJXEXz2qvthzNNLM2zXU';
 
     MyApp.logger.d("url : $url");
@@ -413,7 +418,8 @@ class _ScreenMainState extends State<ScreenMainMap> {
       return unicode;
     });
 
-    MyApp.logger.d(newStr);
+    //MyApp.logger.d(newStr);
+    log(newStr);
 
     Map<String, dynamic> mapResult = jsonDecode(newStr);
 
@@ -435,13 +441,44 @@ class _ScreenMainState extends State<ScreenMainMap> {
       }
     }
 
-    ModelPlace modelPlace = ModelPlace(
-      title: modelPlaceAutoComplete.title,
-      reference: modelPlaceAutoComplete.reference,
-      listUrlImage: listUrlImage,
-      pointGoogle: mapResult['result']?['rating'],
-    );
+    String? type;
+    List typesBody =  mapResult['result']?['types'] as List;
+    for (var element in typesBody) {
+      if(mapPlaceType.keys.contains(element)){
+        type = element;
+        break;
+      }
+    }
 
-    valueNotifierModelPlace.value = modelPlace;
+
+    try {
+      ModelPlace modelPlace = ModelPlace(
+        title: modelPlaceAutoComplete.title,
+        reference: modelPlaceAutoComplete.referenceId,
+
+        type: type,
+        listUrlImage: listUrlImage,
+        pointGoogle: mapResult['result']?['rating'],
+        //
+        phoneNumber: mapResult['result']?['formatted_phone_number'],
+        //
+        address: mapResult['result']?['formatted_address'],
+        locationLat: mapResult['result']?['geometry']?['location']?['lat'],
+        locationLng: mapResult['result']?['geometry']?['location']?['lng'],
+      );
+
+      valueNotifierModelPlace.value = modelPlace;
+
+      googleMapController.animateCamera(
+        CameraUpdate.newLatLng(
+          LatLng(
+            modelPlace.locationLat,
+            modelPlace.locationLng,
+          ),
+        ),
+      );
+    } catch (e) {
+      MyApp.logger.wtf("에러 발생 : ${e.toString()}");
+    }
   }
 }
