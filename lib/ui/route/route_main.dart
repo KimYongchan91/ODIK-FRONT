@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:chaleno/chaleno.dart';
 import 'package:flutter/material.dart';
@@ -44,52 +45,64 @@ class _RouteMainState extends State<RouteMain> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: ValueListenableBuilder(
+      child: AddToCartAnimation(
+        cartKey: MyApp.keyCart,
+        createAddToCartAnimation: (runAddToCartAnimation) {
+          MyApp.runAddToCartAnimation = runAddToCartAnimation;
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: ValueListenableBuilder(
+              valueListenable: valueNotifierIndexPage,
+              builder: (context, value, child) => IndexedStack(
+                index: value,
+                children: const [
+                  ScreenMainHome(),
+                  ScreenMainMap(),
+                  ScreenMainProfile(),
+                ],
+              ),
+            ),
+          ),
+
+          ///플로팅 액션 버튼
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.orange,
+            onPressed: () async {},
+            child: AddToCartIcon(
+              key: MyApp.keyCart,
+              icon: const Icon(Icons.card_travel),
+              badgeOptions: const BadgeOptions(
+                active: false,
+              ),
+            ),
+          ),
+
+          ///플로팅 액션 버튼 위치
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+
+          ///바텀 네비게이션 바
+          bottomNavigationBar: ValueListenableBuilder(
             valueListenable: valueNotifierIndexPage,
-            builder: (context, value, child) => IndexedStack(
-              index: value,
-              children: const [
-                ScreenMainHome(),
-                ScreenMainMap(),
-                ScreenMainProfile(),
-              ],
+            builder: (context, value, child) => AnimatedBottomNavigationBar.builder(
+              itemCount: listIconNavigationBar.length,
+              tabBuilder: (index, isActive) => Icon(
+                listIconNavigationBar[index],
+                color: isActive ? Colors.orange : Colors.grey,
+                size: isActive ? 28 : 24,
+              ),
+              height: 60,
+              //기본값 56
+              activeIndex: value,
+              gapLocation: GapLocation.end,
+              notchSmoothness: NotchSmoothness.defaultEdge,
+              onTap: (index) {
+                valueNotifierIndexPage.value = index;
+              },
             ),
+            //other params
           ),
-        ),
-
-        ///플로팅 액션 버튼
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.orange,
-          child: const Icon(Icons.qr_code),
-          onPressed: () async {},
-        ),
-
-        ///플로팅 액션 버튼 위치
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-
-        ///바텀 네비게이션 바
-        bottomNavigationBar: ValueListenableBuilder(
-          valueListenable: valueNotifierIndexPage,
-          builder: (context, value, child) => AnimatedBottomNavigationBar.builder(
-            itemCount: listIconNavigationBar.length,
-            tabBuilder: (index, isActive) => Icon(
-              listIconNavigationBar[index],
-              color: isActive ? Colors.orange : Colors.grey,
-              size: isActive ? 28 : 24,
-            ),
-            height: 60,
-            //기본값 56
-            activeIndex: value,
-            gapLocation: GapLocation.end,
-            notchSmoothness: NotchSmoothness.defaultEdge,
-            onTap: (index) {
-              valueNotifierIndexPage.value = index;
-            },
-          ),
-          //other params
         ),
       ),
     );

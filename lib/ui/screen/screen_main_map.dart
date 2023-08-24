@@ -15,6 +15,7 @@ import 'package:odik/const/value/test.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/ui/widget/button_standard.dart';
+import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 
 import '../../const/model/place/model_place.dart';
 import '../../const/model/place/model_place_auto_complete.dart';
@@ -270,13 +271,56 @@ class _ScreenMainState extends State<ScreenMainMap> {
                         children: [
                           Expanded(
                             flex: 1,
-                            child: ButtonStandard(
-                              onTap: () {},
-                              height: 32,
-                              label: '장바구니',
+                            child: InkWell(
+                              onTap: () async {
+                                await MyApp.runAddToCartAnimation(MyApp.keyButtonAddCart);
+                              },
+                              child: Card(
+                                child: Stack(
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(3),
+                                        key: MyApp.keyButtonAddCart,
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: colorPrimary,
+                                          ),
+                                          child: const Icon(
+                                            Icons.card_travel,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 32,
+                                      decoration: BoxDecoration(
+                                        color: colorPrimary,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: 2),
+                                          child: Text(
+                                            '장바구니',
+                                            style: CustomTextStyle.normalWhite(),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
+                            /*Container(
+
+
+
+                              ),*/
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Expanded(
