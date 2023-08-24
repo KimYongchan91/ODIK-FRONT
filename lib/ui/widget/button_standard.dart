@@ -8,9 +8,10 @@ class ButtonStandard extends StatelessWidget {
   final String label;
   final void Function() onTap;
   final double? width;
+  final double height;
 
   const ButtonStandard(
-      {required this.onTap, this.color = colorPrimary, this.label = '확인', this.width, super.key});
+      {required this.onTap, this.color = colorPrimary, this.label = '확인', this.width,this.height = 40, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class ButtonStandard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: width ?? double.infinity,
-        height: 40,
+        height: height,
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(4),

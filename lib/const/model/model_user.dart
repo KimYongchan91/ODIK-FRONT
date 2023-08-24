@@ -16,7 +16,8 @@ class ModelUser {
 
   ModelUser.fromJson(Map<String, dynamic> json)
       : tokenOdik = json[keyTokenOdik] ?? '',
-        id = json[keyId] ?? '',
+        id = json[keyEmail] ?? '',
+        //email을 key로
         userLoginType = getUserLoginType(json[keyLoginType]),
         nickName = json[keyNickName],
         userGender = getUserGender(json[keyGender]),
@@ -40,7 +41,7 @@ class ModelUser {
     if (isEncodeDateTime) {
       for (var element in result.keys) {
         if (result[element] is DateTime) {
-          result[element] = (result[element] as DateTime).toIso8601String();
+          result[element] = getFormattedDateTime(result[element] as DateTime);
         }
       }
     }

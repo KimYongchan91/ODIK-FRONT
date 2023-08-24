@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,12 +13,15 @@ import 'package:easy_debounce/easy_debounce.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:odik/const/value/test.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:odik/custom/custom_text_style.dart';
+import 'package:odik/ui/widget/button_standard.dart';
 
 import '../../const/model/place/model_place.dart';
 import '../../const/model/place/model_place_auto_complete.dart';
 import '../../my_app.dart';
 
 const Color colorPrimary = Colors.orange;
+double sizeImageGoogleMap = 80;
 
 class ScreenMainMap extends StatefulWidget {
   const ScreenMainMap({super.key});
@@ -67,7 +71,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
           builder: (context, value, child) => value != null
               ? Container()
               : Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 40),
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Column(
@@ -177,21 +181,109 @@ class _ScreenMainState extends State<ScreenMainMap> {
           valueListenable: valueNotifierModelPlace,
           builder: (context, value, child) => value != null
               ? Container(
-                  width: 600,
-                  height: 400,
+                  margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.white,
+                  ),
+                  width: Get.width,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ///이미지
-                      CachedNetworkImage(
-                        imageUrl: value.urlImage ?? '',
-                        width: Get.width,
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                        placeholder: (context, url) => Center(
-                          child: LoadingAnimationWidget.inkDrop(
-                            color: colorPrimary,
-                            size: 24,
+                      ///제목
+                      Row(
+                        children: [
+                          Text(
+                            value.title,
+                            style: const CustomTextStyle.normalBlackBold(),
                           ),
+                          const Spacer(),
+                          InkWell(
+                            onTap: () {
+                              valueNotifierModelPlace.value = null;
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 10, bottom: 10, top: 10, right: 5),
+                              child: Icon(Icons.close),
+                            ),
+                          )
+                        ],
+                      ),
+
+                      ///별점 영역
+                      Row(
+                        children: [
+                          RatingBarIndicator(
+                            rating: value.pointGoogle ?? 0.0,
+                            itemBuilder: (context, index) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            itemCount: 5,
+                            itemSize: 12.0,
+                            direction: Axis.horizontal,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text('${value.pointGoogle ?? 0}')
+                        ],
+                      ),
+
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      ///이미지
+                      SizedBox(
+                        height: sizeImageGoogleMap,
+                        child: ListView.separated(
+                          itemBuilder: (context, index) => CachedNetworkImage(
+                            imageUrl: value.listUrlImage[index],
+                            width: sizeImageGoogleMap,
+                            height: sizeImageGoogleMap,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                            placeholder: (context, url) => Center(
+                              child: LoadingAnimationWidget.inkDrop(
+                                color: colorPrimary,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                          separatorBuilder: (context, index) => const SizedBox(
+                            width: 5,
+                          ),
+                          itemCount: value.listUrlImage.length,
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
                         ),
+                      ),
+
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: ButtonStandard(
+                              onTap: () {},
+                              height: 32,
+                              label: '장바구니',
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -281,27 +373,29 @@ class _ScreenMainState extends State<ScreenMainMap> {
 
     Map<String, dynamic> mapResult = jsonDecode(newStr);
 
-    String? imageReference;
+    List<String> listUrlImage = [];
+
     dynamic photos = mapResult['result']?['photos'];
-
     if (photos != null && photos is List) {
-      imageReference = photos.first['photo_reference'];
-    }
+      for (var element in (photos)) {
+        String? imageReference = element['photo_reference'];
+        if (imageReference != null) {
+          String urlImage = 'https://maps.googleapis.com/maps/api/place/photo?'
+              'maxwidth=$sizeImageWidthGoogleMapApi&'
+              'photoreference=$imageReference&'
+              'key=$keyGoogleMapApi';
 
-    String? urlImage;
-    if (imageReference != null) {
-      urlImage = 'https://maps.googleapis.com/maps/api/place/photo?'
-          'maxwidth=720&'
-          'photoreference=$imageReference&'
-          'key=$keyGoogleMapApi';
-
-      MyApp.logger.d(urlImage);
+          listUrlImage.add(urlImage);
+          //print(urlImage);
+        }
+      }
     }
 
     ModelPlace modelPlace = ModelPlace(
       title: modelPlaceAutoComplete.title,
       reference: modelPlaceAutoComplete.reference,
-      urlImage: urlImage,
+      listUrlImage: listUrlImage,
+      pointGoogle: mapResult['result']?['rating'],
     );
 
     valueNotifierModelPlace.value = modelPlace;

@@ -1,4 +1,7 @@
 import '../../my_app.dart';
+import 'package:intl/intl.dart';
+
+const String dateFormat = "yy-dd-MM HH:mm";
 
 DateTime? getDateTimeFromDynamicData(dynamic data) {
   if (data == null) {
@@ -6,7 +9,7 @@ DateTime? getDateTimeFromDynamicData(dynamic data) {
   }
   try {
     if (data is String) {
-      return DateTime.parse(data);
+      return DateFormat(dateFormat).parse(data);
     } else if (data is int) {
       return DateTime.fromMillisecondsSinceEpoch(data);
     }
@@ -14,4 +17,8 @@ DateTime? getDateTimeFromDynamicData(dynamic data) {
     MyApp.logger.wtf("datetime 파싱 오류 : ${e.toString()}");
     return null;
   }
+}
+
+String getFormattedDateTime(DateTime dateTime){
+  return DateFormat(dateFormat).format(dateTime);
 }
