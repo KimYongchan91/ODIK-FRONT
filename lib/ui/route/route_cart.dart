@@ -32,7 +32,7 @@ class _RouteCartState extends State<RouteCart> {
                       ? ItemDirection(
                           modelPlaceOrigin: value.listModelPlace[index],
                           modelPlaceDestination: value.listModelPlace[index + 1],
-                          directionType: DirectionType.car,
+                          directionType: DirectionType.transit,
                         )
                       : Container(),
                   itemCount: value.listModelPlace.length,

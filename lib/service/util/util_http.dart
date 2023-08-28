@@ -11,7 +11,8 @@ final Map<String, String> headerStandard = {"Content-Type": "application/json"};
 enum MethodType { get, post }
 
 Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData,
-    {Map<String, dynamic>? headerCustom,
+    {Map<String, String>? headerCustom,
+    bool isIncludeModeHeaderCustom = true,
     bool isNeedDecodeUnicode = false,
     MethodType methodType = MethodType.post}) async {
   //body를 string으로 인코드
@@ -20,15 +21,20 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
   //데이터를 보낼 url
   //String url = 'https://odik.link/auth/email_verify/verify';
 
-  final Map<String, String> header = {...headerStandard};
+   Map<String, String> header = {...headerStandard};
   if (MyApp.providerUser.modelUser != null) {
     header[keyAuthorization] = 'Bearer ${MyApp.providerUser.modelUser!.tokenOdik}';
   }
 
   if (headerCustom != null) {
-    for (var element in headerCustom.keys) {
-      header[element] = headerCustom[element];
+    if(isIncludeModeHeaderCustom){
+      for (var element in headerCustom.keys) {
+        header[element] = headerCustom[element]!;
+      }
+    }else{
+      header = headerCustom;
     }
+
   }
 
   MyApp.logger.d("요청 header : $header\n"

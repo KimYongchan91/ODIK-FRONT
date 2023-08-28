@@ -1,6 +1,6 @@
 import 'package:odik/const/model/place/model_place.dart';
 
-enum DirectionType { car, transportation, foot }
+enum DirectionType { car, transit, foot }
 
  class ModelDirection {
   final ModelPlace modelPlaceOrigin;

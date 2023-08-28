@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:odik/const/model/place/model_direction.dart';
-import 'package:odik/const/model/place/model_direction_car.dart';
 import 'package:odik/const/value/key_user.dart';
 import 'package:odik/service/util/util_snackbar.dart';
 
@@ -89,7 +88,7 @@ class ProviderPlace extends ChangeNotifier {
             "origin=${modelPlaceOrigin.locationLng},${modelPlaceOrigin.locationLat}&"
             "destination=${modelPlaceDestination.locationLng},${modelPlaceDestination.locationLat}&";
 
-        Map<String, dynamic> header = {"Authorization": "KakaoAK ea3f77c6f8358b06fe4ad946662253dc"};
+        Map<String, String> header = {"Authorization": "KakaoAK ea3f77c6f8358b06fe4ad946662253dc"};
 
         try {
           final response =
@@ -119,10 +118,92 @@ class ProviderPlace extends ChangeNotifier {
           MyApp.logger.wtf("direction 에러 : ${e.toString()}");
         }
 
-      case DirectionType.transportation:
-      // TODO: Handle this case.
+      case DirectionType.transit:
+        String url = "https://apis.openapi.sk.com/transit/routes";
+
+        try {
+          Map<String, String> header = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "appKey": "e8wHh2tya84M88aReEpXCa5XTQf3xgo01aZG39k5",
+          };
+
+          Map<String, dynamic> body = {
+            "startX": "${modelPlaceOrigin.locationLng}",
+            "startY": "${modelPlaceOrigin.locationLat}",
+            "endX": "${modelPlaceDestination.locationLng}",
+            "endY": "${modelPlaceDestination.locationLat}",
+            "lang": 1,
+            "format": "json",
+          };
+
+          final response = await requestHttpStandard(
+            url,
+            body,
+            methodType: MethodType.post,
+            headerCustom: header,
+            isIncludeModeHeaderCustom: false,
+            isNeedDecodeUnicode: false,
+          );
+          MyApp.logger.d("response 결과 : ${response.toString()}");
+
+          /* dynamic routes = response['routes'];
+          if (routes is List && routes.isNotEmpty) {
+            dynamic route = routes.first;
+            if (route['result_msg'] == "길찾기 성공") {
+              ModelDirection modelDirection = ModelDirection(
+                modelPlaceOrigin: modelPlaceOrigin,
+                modelPlaceDestination: modelPlaceDestination,
+                directionType: directionType,
+                distance: route['summary']?['distance'] ?? 0,
+                duration: route['summary']?['duration'] ?? 0,
+                fareTaxi: route['summary']?['fare']?['taxi'] ?? 0,
+                fareToll: route['summary']?['fare']?['toll'] ?? 0,
+              );
+
+              //저장후 리턴
+              _listModelDirection.add(modelDirection);
+              return modelDirection;
+            }
+          }*/
+        } catch (e) {
+          MyApp.logger.wtf("direction 에러 : ${e.toString()}");
+        }
       case DirectionType.foot:
-      // TODO: Handle this case.
+        String url = "https://maps.googleapis.com/maps/api/directions/json"
+            "?destination=place_id:${modelPlaceOrigin.referenceId}"
+            "&origin=place_id:${modelPlaceDestination.referenceId}"
+            "&mode=TRANSIT"
+            "&key=$keyGoogleMapApi";
+
+        log(url);
+
+        try {
+          final response = await requestHttpStandard(url, {}, methodType: MethodType.get);
+          MyApp.logger.d("response 결과 : ${response.toString()}");
+
+          /* dynamic routes = response['routes'];
+          if (routes is List && routes.isNotEmpty) {
+            dynamic route = routes.first;
+            if (route['result_msg'] == "길찾기 성공") {
+              ModelDirection modelDirection = ModelDirection(
+                modelPlaceOrigin: modelPlaceOrigin,
+                modelPlaceDestination: modelPlaceDestination,
+                directionType: directionType,
+                distance: route['summary']?['distance'] ?? 0,
+                duration: route['summary']?['duration'] ?? 0,
+                fareTaxi: route['summary']?['fare']?['taxi'] ?? 0,
+                fareToll: route['summary']?['fare']?['toll'] ?? 0,
+              );
+
+              //저장후 리턴
+              _listModelDirection.add(modelDirection);
+              return modelDirection;
+            }
+          }*/
+        } catch (e) {
+          MyApp.logger.wtf("direction 에러 : ${e.toString()}");
+        }
     }
 
     return null;
