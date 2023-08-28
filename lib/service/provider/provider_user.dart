@@ -69,11 +69,12 @@ class ProviderUser extends ChangeNotifier {
   _checkIsValidAccount() async {
     //재 인증 url
     //header 데이터만으로 인증 여부 확인
-    String url = "$urlBaseTest/auth/login";
+    String url = "$urlBaseTest/auth/validate_token";
     Map data = {};
 
     try {
-      Map<String, dynamic> response = await requestHttpStandard(url, data);
+      Map<String, dynamic> response = await requestHttpStandard(url, data,methodType: MethodType.get);
+      MyApp.logger.d("자동 로그인 응답 결과 : ${response.toString()}");
 
       //로그인 성공
       if (response[keyResult] == keyValid) {

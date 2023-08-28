@@ -8,8 +8,12 @@ import '../../my_app.dart';
 final Pattern patternDecodeUnicode = RegExp(r'\\u([0-9A-Fa-f]{4})');
 final Map<String, String> headerStandard = {"Content-Type": "application/json"};
 
+enum MethodType { get, post }
+
 Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData,
-    {bool isNeedDecodeUnicode = false}) async {
+    {Map<String, dynamic>? headerCustom,
+    bool isNeedDecodeUnicode = false,
+    MethodType methodType = MethodType.post}) async {
   //body를 string으로 인코드
   String requestBody = json.encode(requestBodyData);
 
@@ -18,14 +22,29 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
 
   final Map<String, String> header = {...headerStandard};
   if (MyApp.providerUser.modelUser != null) {
-    header[keyAuthorization] = MyApp.providerUser.modelUser!.tokenOdik;
+    header[keyAuthorization] = 'Bearer ${MyApp.providerUser.modelUser!.tokenOdik}';
+  }
+
+  if (headerCustom != null) {
+    for (var element in headerCustom.keys) {
+      header[element] = headerCustom[element];
+    }
   }
 
   MyApp.logger.d("요청 header : $header\n"
       "요청 body : $requestBody");
 
-  http.Response response =
-      await http.post(Uri.parse(url), headers: header, body: requestBody).timeout(const Duration(seconds: 10));
+  http.Response response;
+
+  switch (methodType) {
+    case MethodType.get:
+      response = await http.get(Uri.parse(url), headers: header).timeout(const Duration(seconds: 10));
+
+    case MethodType.post:
+      response = await http
+          .post(Uri.parse(url), headers: header, body: requestBody)
+          .timeout(const Duration(seconds: 10));
+  }
 
   String responseBody;
   if (isNeedDecodeUnicode) {

@@ -16,7 +16,7 @@ class ModelUser {
 
   ModelUser.fromJson(Map<String, dynamic> json)
       : tokenOdik = json[keyTokenOdik] ?? '',
-        id = json[keyEmail] ?? '',
+        id = json[keyEmail] ?? json[keyId] ?? '',
         //email을 key로
         userLoginType = getUserLoginType(json[keyLoginType]),
         nickName = json[keyNickName],

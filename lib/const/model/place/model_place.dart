@@ -65,4 +65,11 @@ reference : $referenceId
     //따옴표 때문
     return result;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || super == other && other is ModelPlace && referenceId == other.referenceId;
+
+  @override
+  int get hashCode => super.hashCode ^ referenceId.hashCode;
 }

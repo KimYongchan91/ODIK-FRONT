@@ -277,7 +277,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
                               onTap: () async {
                                 await MyApp.runAddToCartAnimation(MyApp.keyButtonAddCart);
 
-                                MyApp.providerCart.addPlace(valueNotifierModelPlace.value!);
+                                MyApp.providerPlace.addPlace(valueNotifierModelPlace.value!);
 
                               },
                               child: Card(
@@ -390,7 +390,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
     }
 
     //MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.length}");
-    MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.toString()}");
+    //MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.toString()}");
 
     return listPlaceAutoComplete;
   }
@@ -407,7 +407,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
         'https://maps.googleapis.com/maps/api/place/details/json?place_id=${modelPlaceAutoComplete.referenceId}'
         '&language=ko&key=AIzaSyDeGTGjfDq6K5qFJXEXz2qvthzNNLM2zXU';
 
-    MyApp.logger.d("url : $url");
+    //MyApp.logger.d("url : $url");
 
     http.Response response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
 
@@ -419,7 +419,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
     });
 
     //MyApp.logger.d(newStr);
-    log(newStr);
+    //log(newStr);
 
     Map<String, dynamic> mapResult = jsonDecode(newStr);
 
