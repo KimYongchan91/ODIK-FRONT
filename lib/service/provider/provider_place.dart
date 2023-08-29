@@ -183,39 +183,53 @@ class ProviderPlace extends ChangeNotifier {
           return null;
         }
       case DirectionType.walk:
-        String url = "https://maps.googleapis.com/maps/api/directions/json"
-            "?destination=place_id:${modelPlaceOrigin.referenceId}"
-            "&origin=place_id:${modelPlaceDestination.referenceId}"
-            "&mode=TRANSIT"
-            "&key=$keyGoogleMapApi";
-
-        log(url);
-
         try {
-          final response = await requestHttpStandard(url, {}, methodType: MethodType.get);
+          String url = "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1";
+
+          Map<String, String> header = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "appKey": "e8wHh2tya84M88aReEpXCa5XTQf3xgo01aZG39k5",
+          };
+
+          Map<String, dynamic> body = {
+            "startX": "${modelPlaceOrigin.locationLng}",
+            "startY": "${modelPlaceOrigin.locationLat}",
+            "endX": "${modelPlaceDestination.locationLng}",
+            "endY": "${modelPlaceDestination.locationLat}",
+            "startName": modelPlaceOrigin.title,
+            "endName": modelPlaceDestination.title,
+          };
+
+          final response = await requestHttpStandard(
+            url,
+            body,
+            methodType: MethodType.post,
+            headerCustom: header,
+            isIncludeModeHeaderCustom: false,
+            isNeedDecodeUnicode: false,
+          );
+
           MyApp.logger.d("response 결과 : ${response.toString()}");
 
-          /* dynamic routes = response['routes'];
-          if (routes is List && routes.isNotEmpty) {
-            dynamic route = routes.first;
-            if (route['result_msg'] == "길찾기 성공") {
-              ModelDirection modelDirection = ModelDirection(
-                modelPlaceOrigin: modelPlaceOrigin,
-                modelPlaceDestination: modelPlaceDestination,
-                directionType: directionType,
-                distance: route['summary']?['distance'] ?? 0,
-                duration: route['summary']?['duration'] ?? 0,
-                fareTaxi: route['summary']?['fare']?['taxi'] ?? 0,
-                fareToll: route['summary']?['fare']?['toll'] ?? 0,
-              );
-
-              //저장후 리턴
-              _listModelDirection.add(modelDirection);
-              return modelDirection;
-            }
-          }*/
+          List listItineraries = ((response['features'] ?? []) as List);
+          MyApp.logger.d("listItineraries.first : ${listItineraries.first.toString()}");
+          dynamic properties = listItineraries.first['properties'];
+          if (properties != null && properties['totalDistance'] != null && properties['totalTime'] != null) {
+            ModelDirection modelDirection = ModelDirection(
+              modelPlaceOrigin: modelPlaceOrigin,
+              modelPlaceDestination: modelPlaceDestination,
+              directionType: directionType,
+              distance: properties['totalDistance'],
+              duration: properties['totalTime'],
+            );
+            return modelDirection;
+          } else {
+            return null;
+          }
         } catch (e) {
           MyApp.logger.wtf("direction 에러 : ${e.toString()}");
+          return null;
         }
     }
 

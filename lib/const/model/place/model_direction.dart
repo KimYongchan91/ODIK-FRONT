@@ -20,9 +20,11 @@ class ModelDirection {
 
   final DirectionType directionType;
 
-  ///car
+  ///car & foot
   final int distance;
   final int duration;
+
+  ///car
   final int fareTaxi;
   final int fareToll;
 
@@ -30,6 +32,7 @@ class ModelDirection {
   List<ModelDirectionTransitPlan> listTransitPlan;
 
   ///foot
+
 
   ModelDirection({
     required this.modelPlaceOrigin,

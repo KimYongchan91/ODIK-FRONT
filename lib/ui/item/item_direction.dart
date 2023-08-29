@@ -63,7 +63,7 @@ class _ItemDirectionState extends State<ItemDirection> {
                     Row(
                       children: [
                         Spacer(),
-                        Text('다른 경로 : ${modelDirection.listTransitPlan.length-1}'),
+                        Text('다른 경로 : ${modelDirection.listTransitPlan.length - 1}'),
                       ],
                     ),
                     Text('종류 : ${mapPathType[modelDirection.listTransitPlan.first.pathType] ?? ''}'),
@@ -71,11 +71,16 @@ class _ItemDirectionState extends State<ItemDirection> {
                     Text('총 소요 시간 : ${modelDirection.listTransitPlan.first.durationTotal ~/ 60}분'
                         '(도보 ${modelDirection.listTransitPlan.first.durationWalk ~/ 60}분 포함)'),
                     Text('총 요금 : ${modelDirection.listTransitPlan.first.fareTotal}원'),
-
                   ],
                 );
               } else {
-                return Container();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('거리 : ${(modelDirection.distance / 1000).toStringAsFixed(1)}km'),
+                    Text('소요 시간 : ${modelDirection.duration ~/ 60}분'),
+                  ],
+                );
               }
             }),
           );
