@@ -1,23 +1,33 @@
 import 'package:odik/const/model/place/model_place.dart';
 
-enum DirectionType { car, transit, foot }
+import 'model_direction_transit_plan.dart';
 
- class ModelDirection {
+enum DirectionType { car, transit, walk }
+
+Map<int, String> mapPathType = {
+  1: "지하철",
+  2: "버스",
+  3: "버스+지하철",
+  4: "고속/시외버스",
+  5: "기차",
+  6: "항공",
+  7: "해운",
+};
+
+class ModelDirection {
   final ModelPlace modelPlaceOrigin;
   final ModelPlace modelPlaceDestination;
 
   final DirectionType directionType;
 
+  ///car
   final int distance;
   final int duration;
-
-  ///car
   final int fareTaxi;
   final int fareToll;
 
   ///transit
-  final int countTransfer;
-  final int fare;
+  List<ModelDirectionTransitPlan> listTransitPlan;
 
   ///foot
 
@@ -25,14 +35,16 @@ enum DirectionType { car, transit, foot }
     required this.modelPlaceOrigin,
     required this.modelPlaceDestination,
     required this.directionType,
-    required this.distance,
-    required this.duration,
+
     ///car
+    this.distance = 0,
+    this.duration = 0,
     this.fareTaxi = 0,
     this.fareToll = 0,
+
     ///transit
-    this.countTransfer =0,
-    this.fare = 0,
+    this.listTransitPlan = const [],
+
     ///foot
   });
 

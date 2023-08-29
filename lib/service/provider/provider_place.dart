@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:odik/const/model/place/model_direction.dart';
+import 'package:odik/const/model/place/model_direction_transit_plan.dart';
 import 'package:odik/const/value/key_user.dart';
 import 'package:odik/service/util/util_snackbar.dart';
 
@@ -133,8 +135,9 @@ class ProviderPlace extends ChangeNotifier {
             "startY": "${modelPlaceOrigin.locationLat}",
             "endX": "${modelPlaceDestination.locationLng}",
             "endY": "${modelPlaceDestination.locationLat}",
-            "lang": 1,
+            "lang": 0,
             "format": "json",
+            "reqDttm": DateFormat('yyyyMMddHHmmss').format(DateTime.now())
           };
 
           final response = await requestHttpStandard(
@@ -145,31 +148,41 @@ class ProviderPlace extends ChangeNotifier {
             isIncludeModeHeaderCustom: false,
             isNeedDecodeUnicode: false,
           );
-          MyApp.logger.d("response 결과 : ${response.toString()}");
 
-          /* dynamic routes = response['routes'];
-          if (routes is List && routes.isNotEmpty) {
-            dynamic route = routes.first;
-            if (route['result_msg'] == "길찾기 성공") {
-              ModelDirection modelDirection = ModelDirection(
-                modelPlaceOrigin: modelPlaceOrigin,
-                modelPlaceDestination: modelPlaceDestination,
-                directionType: directionType,
-                distance: route['summary']?['distance'] ?? 0,
-                duration: route['summary']?['duration'] ?? 0,
-                fareTaxi: route['summary']?['fare']?['taxi'] ?? 0,
-                fareToll: route['summary']?['fare']?['toll'] ?? 0,
-              );
+          List<ModelDirectionTransitPlan> listModelDirectionTransitPlan = [];
+          List listItineraries = ((response['metaData']?['plan']?['itineraries'] ?? []) as List);
 
-              //저장후 리턴
-              _listModelDirection.add(modelDirection);
-              return modelDirection;
-            }
-          }*/
+          for (var element in listItineraries) {
+            ModelDirectionTransitPlan modelDirectionTransitPlan = ModelDirectionTransitPlan(
+              pathType: element['pathType'] ?? 0,
+              countTransfer: element['transferCount'] ?? 0,
+              distanceTotal: element['totalDistance'] ?? 0,
+              distanceWalk: element['totalWalkDistance'] ?? 0,
+              durationTotal: element['totalTime'] ?? 0,
+              durationWalk: element['totalWalkTime'] ?? 0,
+              fareTotal: element['fare']['regular']['totalFare'],
+            );
+
+            listModelDirectionTransitPlan.add(modelDirectionTransitPlan);
+          }
+
+          if (listModelDirectionTransitPlan.isNotEmpty) {
+            ModelDirection modelDirection = ModelDirection(
+              modelPlaceOrigin: modelPlaceOrigin,
+              modelPlaceDestination: modelPlaceDestination,
+              directionType: directionType,
+              listTransitPlan: listModelDirectionTransitPlan,
+            );
+
+            return modelDirection;
+          } else {
+            return null;
+          }
         } catch (e) {
           MyApp.logger.wtf("direction 에러 : ${e.toString()}");
+          return null;
         }
-      case DirectionType.foot:
+      case DirectionType.walk:
         String url = "https://maps.googleapis.com/maps/api/directions/json"
             "?destination=place_id:${modelPlaceOrigin.referenceId}"
             "&origin=place_id:${modelPlaceDestination.referenceId}"

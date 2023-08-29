@@ -52,6 +52,8 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
           .timeout(const Duration(seconds: 10));
   }
 
+
+
   String responseBody;
   if (isNeedDecodeUnicode) {
     responseBody = response.body.replaceAllMapped(patternDecodeUnicode, (Match unicodeMatch) {
@@ -60,7 +62,7 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
       return unicode;
     });
   } else {
-    responseBody = response.body;
+    responseBody = utf8.decode(response.bodyBytes);
   }
 
   Map<String, dynamic> responseBodyData = jsonDecode(responseBody);
