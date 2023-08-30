@@ -11,7 +11,7 @@ class MyApp {
   static Logger logger = Logger();
 
   static ProviderUser providerUser = ProviderUser();
-  static ProviderPlace providerPlace = ProviderPlace();
+  static ProviderCart providerPlace = ProviderCart();
 
   //fcm  관련
   static late Completer completerInitFcm;

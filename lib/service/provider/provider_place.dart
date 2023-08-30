@@ -12,10 +12,11 @@ import '../../const/value/key.dart';
 import '../../const/value/test.dart';
 import '../../my_app.dart';
 import '../util/util_http.dart';
+import '../util/util_tour_item.dart';
 
-class ProviderPlace extends ChangeNotifier {
+class ProviderCart extends ChangeNotifier {
+  final String title = "${MyApp.providerUser.modelUser!=null ?'${MyApp.providerUser.modelUser!.nickName}의'  :''} 장바구니";
   final List<ModelPlace> _listModelPlace = [];
-
   final List<ModelDirection> _listModelDirection = []; //길찾기 memory용
 
   addPlace(ModelPlace modelPlace) {
@@ -37,10 +38,14 @@ class ProviderPlace extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
   _addPlaceToServer(ModelPlace modelPlace) async {
     log("카트에 추가되는 정보 : ${modelPlace.toJson()}");
 
-    String url = "$urlBaseTest/tour/item";
+    getTourItemByReferenceIdGoogle(modelPlace.referenceId);
+
+    /*String url = "$urlBaseTest/tour/item";
     Map data = modelPlace.toJson();
 
     try {
@@ -56,7 +61,7 @@ class ProviderPlace extends ChangeNotifier {
     } catch (e) {
       //오류 발생
       showSnackBarOnRoute("관광지 생성에 실패했습니다.");
-    }
+    }*/
   }
 
   Future<ModelDirection?> getModelDirection(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odik/const/model/place/model_direction.dart';
+import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/provider/provider_place.dart';
 import 'package:odik/ui/item/item_direction.dart';
 import 'package:odik/ui/item/item_place.dart';
@@ -15,6 +16,8 @@ class RouteCart extends StatefulWidget {
 }
 
 class _RouteCartState extends State<RouteCart> {
+  ValueNotifier<DirectionType> valueNotifierDirectionType = ValueNotifier(DirectionType.car);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,17 +28,26 @@ class _RouteCartState extends State<RouteCart> {
         builder: (context, child) => SafeArea(
           child: Column(
             children: [
-              Consumer<ProviderPlace>(
-                builder: (context, value, child) => ListView.separated(
-                  itemBuilder: (context, index) => ItemPlace(value.listModelPlace[index]),
-                  separatorBuilder: (context, index) => index != value.listModelPlace.length - 1
-                      ? ItemDirection(
-                          modelPlaceOrigin: value.listModelPlace[index],
-                          modelPlaceDestination: value.listModelPlace[index + 1],
-                          directionType: DirectionType.walk,
+              Consumer<ProviderCart>(
+                builder: (context, providerCart, child) => Text(
+                  providerCart.title,
+                  style: CustomTextStyle.bigBlackBold(),
+                ),
+              ),
+              Consumer<ProviderCart>(
+                builder: (context, providerCart, child) => ListView.separated(
+                  itemBuilder: (context, index) => ItemPlace(providerCart.listModelPlace[index]),
+                  separatorBuilder: (context, index) => index != providerCart.listModelPlace.length - 1
+                      ? ValueListenableBuilder(
+                          valueListenable: valueNotifierDirectionType,
+                          builder: (context, directionType, child) => ItemDirection(
+                            modelPlaceOrigin: providerCart.listModelPlace[index],
+                            modelPlaceDestination: providerCart.listModelPlace[index + 1],
+                            directionType: directionType,
+                          ),
                         )
                       : Container(),
-                  itemCount: value.listModelPlace.length,
+                  itemCount: providerCart.listModelPlace.length,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                 ),
