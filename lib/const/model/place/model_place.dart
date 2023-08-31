@@ -39,11 +39,39 @@ class ModelPlace extends ModelPlaceAutoComplete {
           referenceId: reference,
         );
 
+  ModelPlace.fromJson(Map<String, dynamic> json)
+      : type = json[keyType] ?? '',
+        listUrlImage = json[keyImagesGoogle] ?? [],
+        pointGoogle = json[keyPointGoogle],
+        //
+        phoneNumber = json[keyPhoneNumber],
+        address = json[keyAddress],
+        //
+        locationLat = json[keyLocationLat],
+        locationLng = json[keyLocationLng]
+        //
+        ,
+        super(
+          title: json[keyTitle],
+          referenceId: keyReferenceIdGoogle,
+        );
+
   @override
   String toString() {
     return '''
-title : $title 
-reference : $referenceId   
+title : $title, 
+reference : $referenceId,
+//
+type : $type,
+listUrlImage : $listUrlImage,
+pointGoogle : $pointGoogle,
+//
+phoneNumber : $phoneNumber,
+address : $address,
+//
+locationLat : $locationLat,
+locationLng : $locationLng,
+
 ''';
   }
 

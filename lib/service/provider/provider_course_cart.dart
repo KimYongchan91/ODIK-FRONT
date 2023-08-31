@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/const/model/place/model_direction_transit_plan.dart';
 import 'package:odik/const/value/key_user.dart';
@@ -14,63 +16,37 @@ import '../../my_app.dart';
 import '../util/util_http.dart';
 import '../util/util_tour_item.dart';
 
-class ProviderCart extends ChangeNotifier {
-  final String title = "${MyApp.providerUser.modelUser!=null ?'${MyApp.providerUser.modelUser!.nickName}의'  :''} 장바구니";
-  final List<ModelPlace> _listModelPlace = [];
+class ProviderCourseCart extends ChangeNotifier {
+  final String title =
+      "${MyApp.providerUser.modelUser != null ? '${MyApp.providerUser.modelUser!.nickName}의' : ''} 장바구니";
+  final List<ModelTourItem> _listModelTourItem = [];
   final List<ModelDirection> _listModelDirection = []; //길찾기 memory용
 
-  addPlace(ModelPlace modelPlace) {
+  addPlace(ModelPlace modelPlace) async {
     if (MyApp.providerUser.modelUser == null) {
       showSnackBarOnRoute(messageNeedLogin);
       return;
     }
 
-    if (listModelPlace.contains(modelPlace)) {
+    if (listModelTourItem.contains(modelPlace)) {
       return;
     }
 
-    _listModelPlace.add(modelPlace);
-
-    //서버로 전송
-    _addPlaceToServer(modelPlace);
-
-    //새로고침
-    notifyListeners();
-  }
-
-
-
-  _addPlaceToServer(ModelPlace modelPlace) async {
-    log("카트에 추가되는 정보 : ${modelPlace.toJson()}");
-
-    getTourItemByReferenceIdGoogle(modelPlace.referenceId);
-
-    /*String url = "$urlBaseTest/tour/item";
-    Map data = modelPlace.toJson();
-
-    try {
-      Map<String, dynamic> response = await requestHttpStandard(url, data);
-      MyApp.logger.d("관광지 생성 응답결과 : ${response.toString()}");
-
-      //로그인 성공
-      if (response[keyResult] == keyOk) {
-        showSnackBarOnRoute("관광지 생성에 성공했습니다.");
-      } else {
-        showSnackBarOnRoute("관광지 생성에 실패했습니다.");
-      }
-    } catch (e) {
-      //오류 발생
-      showSnackBarOnRoute("관광지 생성에 실패했습니다.");
-    }*/
+    ModelTourItem? modelTourItem = await getTourItemFromPlace(modelPlace);
+    if (modelTourItem != null) {
+      _listModelTourItem.add(modelTourItem);
+      //새로고침
+      notifyListeners();
+    }
   }
 
   Future<ModelDirection?> getModelDirection(
-      ModelPlace modelPlaceOrigin, ModelPlace modelPlaceDestination, DirectionType directionType) async {
+      ModelTourItem modelTourItemOrigin, ModelTourItem modelTourItemDestination, DirectionType directionType) async {
     //기존에 있으면 반환
 
     for (var element in _listModelDirection) {
-      if (element.modelPlaceOrigin == modelPlaceOrigin &&
-          element.modelPlaceDestination == modelPlaceDestination &&
+      if (element.modelTourItemOrigin == modelTourItemOrigin &&
+          element.modelTourItemDestination == modelTourItemDestination &&
           element.directionType == directionType) {
         MyApp.logger.d("기존 direction 재활용");
         return element;
@@ -92,8 +68,8 @@ class ProviderCart extends ChangeNotifier {
     switch (directionType) {
       case DirectionType.car:
         String url = "https://apis-navi.kakaomobility.com/v1/directions?"
-            "origin=${modelPlaceOrigin.locationLng},${modelPlaceOrigin.locationLat}&"
-            "destination=${modelPlaceDestination.locationLng},${modelPlaceDestination.locationLat}&";
+            "origin=${modelTourItemOrigin.locationLng},${modelTourItemOrigin.locationLat}&"
+            "destination=${modelTourItemDestination.locationLng},${modelTourItemDestination.locationLat}&";
 
         Map<String, String> header = {"Authorization": "KakaoAK ea3f77c6f8358b06fe4ad946662253dc"};
 
@@ -107,8 +83,8 @@ class ProviderCart extends ChangeNotifier {
             dynamic route = routes.first;
             if (route['result_msg'] == "길찾기 성공") {
               ModelDirection modelDirection = ModelDirection(
-                modelPlaceOrigin: modelPlaceOrigin,
-                modelPlaceDestination: modelPlaceDestination,
+                modelTourItemOrigin: modelTourItemOrigin,
+                modelTourItemDestination: modelTourItemDestination,
                 directionType: directionType,
                 distance: route['summary']?['distance'] ?? 0,
                 duration: route['summary']?['duration'] ?? 0,
@@ -136,10 +112,10 @@ class ProviderCart extends ChangeNotifier {
           };
 
           Map<String, dynamic> body = {
-            "startX": "${modelPlaceOrigin.locationLng}",
-            "startY": "${modelPlaceOrigin.locationLat}",
-            "endX": "${modelPlaceDestination.locationLng}",
-            "endY": "${modelPlaceDestination.locationLat}",
+            "startX": "${modelTourItemOrigin.locationLng}",
+            "startY": "${modelTourItemOrigin.locationLat}",
+            "endX": "${modelTourItemDestination.locationLng}",
+            "endY": "${modelTourItemDestination.locationLat}",
             "lang": 0,
             "format": "json",
             "reqDttm": DateFormat('yyyyMMddHHmmss').format(DateTime.now())
@@ -173,8 +149,8 @@ class ProviderCart extends ChangeNotifier {
 
           if (listModelDirectionTransitPlan.isNotEmpty) {
             ModelDirection modelDirection = ModelDirection(
-              modelPlaceOrigin: modelPlaceOrigin,
-              modelPlaceDestination: modelPlaceDestination,
+              modelTourItemOrigin: modelTourItemOrigin,
+              modelTourItemDestination: modelTourItemDestination,
               directionType: directionType,
               listTransitPlan: listModelDirectionTransitPlan,
             );
@@ -198,12 +174,12 @@ class ProviderCart extends ChangeNotifier {
           };
 
           Map<String, dynamic> body = {
-            "startX": "${modelPlaceOrigin.locationLng}",
-            "startY": "${modelPlaceOrigin.locationLat}",
-            "endX": "${modelPlaceDestination.locationLng}",
-            "endY": "${modelPlaceDestination.locationLat}",
-            "startName": modelPlaceOrigin.title,
-            "endName": modelPlaceDestination.title,
+            "startX": "${modelTourItemOrigin.locationLng}",
+            "startY": "${modelTourItemOrigin.locationLat}",
+            "endX": "${modelTourItemDestination.locationLng}",
+            "endY": "${modelTourItemDestination.locationLat}",
+            "startName": modelTourItemOrigin.title,
+            "endName": modelTourItemDestination.title,
           };
 
           final response = await requestHttpStandard(
@@ -222,8 +198,8 @@ class ProviderCart extends ChangeNotifier {
           dynamic properties = listItineraries.first['properties'];
           if (properties != null && properties['totalDistance'] != null && properties['totalTime'] != null) {
             ModelDirection modelDirection = ModelDirection(
-              modelPlaceOrigin: modelPlaceOrigin,
-              modelPlaceDestination: modelPlaceDestination,
+              modelTourItemOrigin: modelTourItemOrigin,
+              modelTourItemDestination: modelTourItemDestination,
               directionType: directionType,
               distance: properties['totalDistance'],
               duration: properties['totalTime'],
@@ -241,7 +217,8 @@ class ProviderCart extends ChangeNotifier {
     return null;
   }
 
-  List<ModelPlace> get listModelPlace => _listModelPlace;
+
+  List<ModelTourItem> get listModelTourItem => _listModelTourItem;
 
   List<ModelDirection> get listModelDirection => _listModelDirection;
 }

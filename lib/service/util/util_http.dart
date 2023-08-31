@@ -8,7 +8,9 @@ import '../../my_app.dart';
 final Pattern patternDecodeUnicode = RegExp(r'\\u([0-9A-Fa-f]{4})');
 final Map<String, String> headerStandard = {"Content-Type": "application/json"};
 
-enum MethodType { get, post }
+enum MethodType { get, post, put, delete }
+
+typedef GetResponse = Future<http.Response> Function();
 
 Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData,
     {Map<String, String>? headerCustom,
@@ -21,38 +23,48 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
   //데이터를 보낼 url
   //String url = 'https://odik.link/auth/email_verify/verify';
 
-   Map<String, String> header = {...headerStandard};
+  Map<String, String> header = {...headerStandard};
   if (MyApp.providerUser.modelUser != null) {
     header[keyAuthorization] = 'Bearer ${MyApp.providerUser.modelUser!.tokenOdik}';
   }
 
   if (headerCustom != null) {
-    if(isIncludeModeHeaderCustom){
+    if (isIncludeModeHeaderCustom) {
       for (var element in headerCustom.keys) {
         header[element] = headerCustom[element]!;
       }
-    }else{
+    } else {
       header = headerCustom;
     }
-
   }
 
-  MyApp.logger.d("요청 header : $header\n"
+  MyApp.logger.d(""
+      "요청 url : $url\n"
+      "요청 header : $header\n"
       "요청 body : $requestBody");
 
   http.Response response;
-
   switch (methodType) {
     case MethodType.get:
       response = await http.get(Uri.parse(url), headers: header).timeout(const Duration(seconds: 10));
+      break;
 
     case MethodType.post:
       response = await http
           .post(Uri.parse(url), headers: header, body: requestBody)
           .timeout(const Duration(seconds: 10));
+      break;
+    case MethodType.put:
+      response = await http
+          .put(Uri.parse(url), headers: header, body: requestBody)
+          .timeout(const Duration(seconds: 10));
+      break;
+    case MethodType.delete:
+      response = await http
+          .delete(Uri.parse(url), headers: header, body: requestBody)
+          .timeout(const Duration(seconds: 10));
+      break;
   }
-
-
 
   String responseBody;
   if (isNeedDecodeUnicode) {

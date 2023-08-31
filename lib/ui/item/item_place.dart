@@ -1,14 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_place.dart';
 import 'package:odik/custom/custom_text_style.dart';
 
 const double _sizeImagePlace = 100;
 
-class ItemPlace extends StatelessWidget {
-  final ModelPlace modelPlace;
+class ItemTourItemForCart extends StatelessWidget {
+  final ModelTourItem modelTourItem;
 
-  const ItemPlace(this.modelPlace, {super.key});
+  const ItemTourItemForCart(this.modelTourItem, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +23,13 @@ class ItemPlace extends StatelessWidget {
           child: Row(
             children: [
               CachedNetworkImage(
-                imageUrl: modelPlace.listUrlImage.first,
+                imageUrl: modelTourItem.listUrlImage.first,
                 width: _sizeImagePlace,
                 height: _sizeImagePlace,
                 fit: BoxFit.cover,
               ),
               Text(
-                modelPlace.title,
+                modelTourItem.title,
                 style: const CustomTextStyle.normalBlackBold(),
               )
             ],

@@ -277,7 +277,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
                               onTap: () async {
                                 await MyApp.runAddToCartAnimation(MyApp.keyButtonAddCart);
 
-                                MyApp.providerPlace.addPlace(valueNotifierModelPlace.value!);
+                                MyApp.providerCourseCart.addPlace(valueNotifierModelPlace.value!);
 
                               },
                               child: Card(
@@ -377,7 +377,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
       return unicode;
     });
 
-    MyApp.logger.d("응답 결과 : $newStr");
+    //MyApp.logger.d("응답 결과 : $newStr");
 
     Map<String, dynamic> data = jsonDecode(newStr);
     List listData = data["predictions"];

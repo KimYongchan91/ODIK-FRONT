@@ -1,3 +1,4 @@
+const String keyIdx= "idx";
 const String keyTitle = "title";
 const String keyReferenceIdGoogle = "reference_id_google";
 const String keyType = "type";

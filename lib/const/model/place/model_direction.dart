@@ -1,3 +1,4 @@
+import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_place.dart';
 
 import 'model_direction_transit_plan.dart';
@@ -15,8 +16,8 @@ Map<int, String> mapPathType = {
 };
 
 class ModelDirection {
-  final ModelPlace modelPlaceOrigin;
-  final ModelPlace modelPlaceDestination;
+  final ModelTourItem modelTourItemOrigin;
+  final ModelTourItem modelTourItemDestination;
 
   final DirectionType directionType;
 
@@ -35,8 +36,8 @@ class ModelDirection {
 
 
   ModelDirection({
-    required this.modelPlaceOrigin,
-    required this.modelPlaceDestination,
+    required this.modelTourItemOrigin,
+    required this.modelTourItemDestination,
     required this.directionType,
 
     ///car
@@ -56,10 +57,10 @@ class ModelDirection {
       identical(this, other) ||
       other is ModelDirection &&
           runtimeType == other.runtimeType &&
-          modelPlaceOrigin == other.modelPlaceOrigin &&
-          modelPlaceDestination == other.modelPlaceDestination &&
+          modelTourItemOrigin == other.modelTourItemOrigin &&
+          modelTourItemDestination == other.modelTourItemDestination &&
           directionType == other.directionType;
 
   @override
-  int get hashCode => modelPlaceOrigin.hashCode ^ modelPlaceDestination.hashCode ^ directionType.hashCode;
+  int get hashCode => modelTourItemOrigin.hashCode ^ modelTourItemDestination.hashCode ^ directionType.hashCode;
 }
