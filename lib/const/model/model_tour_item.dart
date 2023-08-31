@@ -1,4 +1,4 @@
-import '../value/key_place.dart';
+import '../value/key.dart';
 
 class ModelTourItem {
   final int idx;

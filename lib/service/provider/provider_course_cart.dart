@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/const/model/place/model_direction_transit_plan.dart';
-import 'package:odik/const/value/key_user.dart';
 import 'package:odik/service/util/util_snackbar.dart';
 
 import '../../const/model/place/model_place.dart';
@@ -14,6 +13,7 @@ import '../../const/value/key.dart';
 import '../../const/value/test.dart';
 import '../../my_app.dart';
 import '../util/util_http.dart';
+import '../util/util_tour_course.dart';
 import '../util/util_tour_item.dart';
 
 class ProviderCourseCart extends ChangeNotifier {
@@ -28,20 +28,19 @@ class ProviderCourseCart extends ChangeNotifier {
       return;
     }
 
-    if (listModelTourItem.contains(modelPlace)) {
-      return;
-    }
-
     ModelTourItem? modelTourItem = await getTourItemFromPlace(modelPlace);
-    if (modelTourItem != null) {
+    if (modelTourItem != null && listModelTourItem.contains(modelTourItem) == false) {
       _listModelTourItem.add(modelTourItem);
       //새로고침
       notifyListeners();
+
+      //내 장바구니에 추가
+      addTourItemToTourCourse(modelTourItem, 0, _listModelTourItem.length-1); //todo 김용찬 현재 테스트 중, 0으로 고정
     }
   }
 
-  Future<ModelDirection?> getModelDirection(
-      ModelTourItem modelTourItemOrigin, ModelTourItem modelTourItemDestination, DirectionType directionType) async {
+  Future<ModelDirection?> getModelDirection(ModelTourItem modelTourItemOrigin,
+      ModelTourItem modelTourItemDestination, DirectionType directionType) async {
     //기존에 있으면 반환
 
     for (var element in _listModelDirection) {
@@ -216,7 +215,6 @@ class ProviderCourseCart extends ChangeNotifier {
 
     return null;
   }
-
 
   List<ModelTourItem> get listModelTourItem => _listModelTourItem;
 

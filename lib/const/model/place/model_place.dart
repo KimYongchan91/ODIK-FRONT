@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:odik/const/model/place/model_place_auto_complete.dart';
 
 import '../../value/key.dart';
-import '../../value/key_place.dart';
 
 class ModelPlace extends ModelPlaceAutoComplete {
   final String? type;

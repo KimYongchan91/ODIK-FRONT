@@ -14,24 +14,24 @@ UserLoginType getUserLoginType(String? loginType) {
   }
 }
 
-UserGender getUserGender(String? gender) {
+UserGenderType getUserGender(String? gender) {
   if (gender == keyMale || gender == keyMale2) {
-    return UserGender.male;
+    return UserGenderType.male;
   } else if (gender == keyFemale || gender == keyFemale2) {
-    return UserGender.female;
+    return UserGenderType.female;
   } else {
-    return UserGender.error;
+    return UserGenderType.error;
   }
 }
 
-UserState getUserState(String? state) {
+UserStateType getUserState(String? state) {
   if (state == keyOn) {
-    return UserState.on;
+    return UserStateType.on;
   } else if (state == keyOut) {
-    return UserState.out;
+    return UserStateType.out;
   } else if (state == keyBan) {
-    return UserState.ban;
+    return UserStateType.ban;
   } else {
-    return UserState.error;
+    return UserStateType.error;
   }
 }

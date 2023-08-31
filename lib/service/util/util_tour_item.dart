@@ -3,7 +3,6 @@ import 'package:odik/service/util/util_http.dart';
 
 import '../../const/model/place/model_place.dart';
 import '../../const/value/key.dart';
-import '../../const/value/key_user.dart';
 import '../../const/value/test.dart';
 import '../../my_app.dart';
 
