@@ -28,9 +28,27 @@ class ItemTourItemForCart extends StatelessWidget {
                 height: _sizeImagePlace,
                 fit: BoxFit.cover,
               ),
-              Text(
-                modelTourItem.title,
-                style: const CustomTextStyle.normalBlackBold(),
+              Expanded(
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(5),
+                        child: Icon(Icons.delete),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      modelTourItem.title,
+                      style: const CustomTextStyle.normalBlackBold(),
+                    ),
+                  ],
+                ),
               )
             ],
           ),

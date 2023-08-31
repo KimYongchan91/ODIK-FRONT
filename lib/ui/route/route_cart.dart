@@ -3,7 +3,7 @@ import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/provider/provider_course_cart.dart';
 import 'package:odik/ui/item/item_direction.dart';
-import 'package:odik/ui/item/item_place.dart';
+import 'package:odik/ui/item/item_tour_item_for_cart.dart';
 import 'package:provider/provider.dart';
 
 import '../../my_app.dart';
