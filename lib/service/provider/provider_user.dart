@@ -60,7 +60,7 @@ class ProviderUser extends ChangeNotifier {
   ///자동 로그인
   loginWithAuto() async {
     String? data = await flutterSecureStorage.read(key: keyUserLastLogin);
-    MyApp.logger.d("불러온 마지막 로그인 정보 : $data");
+    //MyApp.logger.d("불러온 마지막 로그인 정보 : $data");
 
     //기존에 로그인 정보가 있음
     if (data != null) {
@@ -90,7 +90,7 @@ class ProviderUser extends ChangeNotifier {
 
     try {
       Map<String, dynamic> response = await requestHttpStandard(url, data, methodType: MethodType.get);
-      MyApp.logger.d("자동 로그인 응답 결과 : ${response.toString()}");
+      //MyApp.logger.d("자동 로그인 응답 결과 : ${response.toString()}");
 
       //로그인 성공
       if (response[keyResult] == keyValid) {

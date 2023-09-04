@@ -54,10 +54,11 @@ class ProviderCourseCart extends ChangeNotifier {
       if (response[keyResult] == keyOk) {
         changeTourCourseTitle(response[keyTourCourse][keyTitle], isNotify: false);
 
-        for (var element in ((response[keyTourCourse][keyTourItems] ?? []) as List)) { //수정 전
-        //for (var element in ((response["tour_course_item_lists"] ?? []) as List)) {
+        for (var element in ((response[keyTourCourse][keyTourItems] ?? []) as List)) {
+          //수정 전
+          //for (var element in ((response["tour_course_item_lists"] ?? []) as List)) {
           ModelTourItem modelTourItem = ModelTourItem.fromJson(element[keyTourItem]);
-          MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
+          //MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
           MyApp.providerCourseCart
               .addModelTourItem(modelTourItem, element[keyDay], element[keyLevel], isNotify: false);
         }
@@ -109,7 +110,7 @@ class ProviderCourseCart extends ChangeNotifier {
           modelTourItem, _listModelTourItem.length - 1, _listModelTourItem.last.length - 1);*/
 
       //todo 김용찬 아래로 대체
-      _changeTourCourse();
+      _changeTourCourseWithServer();
     }
   }
 
@@ -130,35 +131,45 @@ class ProviderCourseCart extends ChangeNotifier {
 
   //아이템 순서 재배열
   onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-    MyApp.logger.d("_onItemReorder\n"
-        "oldItemIndex : $oldItemIndex\n"
-        "oldListIndex : $oldListIndex\n"
-        "newItemIndex : $newItemIndex\n"
-        "newListIndex : $newListIndex\n");
+    //MyApp.logger.d("_onItemReorder\n"
+    //    "oldItemIndex : $oldItemIndex\n"
+    //    "oldListIndex : $oldListIndex\n"
+    //    "newItemIndex : $newItemIndex\n"
+    //    "newListIndex : $newListIndex\n");
 
     var itemOld = _listModelTourItem[oldListIndex][oldItemIndex];
     _listModelTourItem[oldListIndex].removeAt(oldItemIndex);
     _listModelTourItem[newListIndex].insert(newItemIndex, itemOld);
     notifyListeners();
 
-    _changeTourCourse();
+    _changeTourCourseWithServer();
   }
 
   //리스트 전체 순서 재배열
   onListReorder(int oldListIndex, int newListIndex) {
-    MyApp.logger.d("_onListReorder\n"
-        "oldItemIndex : $oldListIndex\n"
-        "newListIndex : $newListIndex\n");
+    //MyApp.logger.d("_onListReorder\n"
+    //    "oldItemIndex : $oldListIndex\n"
+    //    "newListIndex : $newListIndex\n");
 
     var listOld = _listModelTourItem[oldListIndex];
     _listModelTourItem.removeAt(oldListIndex);
     _listModelTourItem.insert(newListIndex, listOld);
     notifyListeners();
 
-    _changeTourCourse();
+    _changeTourCourseWithServer();
   }
 
-  _changeTourCourse() async {
+  deleteModelTourItem(ModelTourItem modelTourItem) {
+    for (var element in _listModelTourItem) {
+      element.remove(modelTourItem);
+    }
+
+    notifyListeners();
+
+    _changeTourCourseWithServer();
+  }
+
+  _changeTourCourseWithServer() async {
     if (_modelTourCourseMy == null) {
       MyApp.logger.wtf("modelTourCourseMy ==null");
       return;
@@ -182,17 +193,17 @@ class ProviderCourseCart extends ChangeNotifier {
     };
 
     MyApp.logger.d("최종 modelTourCourseMy : ${mapBody.toString()}");
+
     ///user/course
     String url = "$urlBaseTest/user/course";
 
     try {
-      Map<String, dynamic> response = await requestHttpStandard(url, mapBody,methodType: MethodType.put);
+      Map<String, dynamic> response = await requestHttpStandard(url, mapBody, methodType: MethodType.put);
       MyApp.logger.d("코스 변경 응답결과 : ${response.toString()}");
 
       //로그인 성공
       if (response[keyResult] == keyOk) {
         MyApp.logger.d("코스 변경에 성공했습니다.");
-
       } else {
         MyApp.logger.wtf("관광지 생성에 실패했습니다.");
       }

@@ -86,4 +86,12 @@ locationLng : $locationLng,
     //따옴표 때문
     return result;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ModelTourItem && runtimeType == other.runtimeType && idx == other.idx;
+
+  @override
+  int get hashCode => idx.hashCode;
 }

@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_place.dart';
 import 'package:odik/custom/custom_text_style.dart';
+import 'package:odik/ui/dialog/dialog_delete_tour_item_for_cart.dart';
+
+import '../../my_app.dart';
 
 const double _sizeImagePlace = 60;
 
@@ -32,8 +36,11 @@ class ItemTourItemForCart extends StatelessWidget {
                 child: Column(
                   children: [
                     InkWell(
-                      onTap: () {
-
+                      onTap: ()  async{
+                        var result = await Get.dialog(const DialogDeleteTourItemForCart());
+                        if(result == true){
+                          MyApp.providerCourseCart.deleteModelTourItem(modelTourItem);
+                        }
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(5),

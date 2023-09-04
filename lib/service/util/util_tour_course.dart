@@ -25,7 +25,7 @@ Future<ModelTourCourse?> getTourCourseMy() async {
 
   try {
     Map<String, dynamic> response = await requestHttpStandard(url, {}, methodType: MethodType.get);
-    MyApp.logger.d("내 장바구니 조회 응답결과 : ${response.toString()}");
+    //MyApp.logger.d("내 장바구니 조회 응답결과 : ${response.toString()}");
 
     //todo 김용찬 idx가 아닌 result로 구별하자
     if (response[keyTourCourse][keyIdx] != null) {
