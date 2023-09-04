@@ -6,7 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/const/model/place/model_direction_transit_plan.dart';
+import 'package:odik/const/value/tour_course.dart';
 import 'package:odik/service/util/util_snackbar.dart';
+import 'package:quiver/iterables.dart';
 
 import '../../const/model/place/model_place.dart';
 import '../../const/value/key.dart';
@@ -17,25 +19,67 @@ import '../util/util_tour_course.dart';
 import '../util/util_tour_item.dart';
 
 class ProviderCourseCart extends ChangeNotifier {
-  final String title =
+  String _title =
       "${MyApp.providerUser.modelUser != null ? '${MyApp.providerUser.modelUser!.nickName}의' : ''} 장바구니";
-  final List<ModelTourItem> _listModelTourItem = [];
+  final List<List<ModelTourItem>> _listModelTourItem = [];
   final List<ModelDirection> _listModelDirection = []; //길찾기 memory용
 
-  addPlace(ModelPlace modelPlace) async {
+  ProviderCourseCart() {
+    //기본적으로 2개 생성해둠
+    for (int i = 0; i < 1; i++) {
+      _listModelTourItem.add([]);
+    }
+  }
+
+  changeTitle(String titleNew, {bool isNotify = true}) {
+    _title = titleNew;
+
+    if (isNotify) {
+      notifyListeners();
+    }
+  }
+
+  addPlace(ModelPlace modelPlace, {bool isNotify = true}) async {
     if (MyApp.providerUser.modelUser == null) {
       showSnackBarOnRoute(messageNeedLogin);
       return;
     }
 
     ModelTourItem? modelTourItem = await getTourItemFromPlace(modelPlace);
-    if (modelTourItem != null && listModelTourItem.contains(modelTourItem) == false) {
-      _listModelTourItem.add(modelTourItem);
+
+    bool isExistAlready = false;
+    for (var element in _listModelTourItem) {
+      if (element.contains(modelTourItem)) {
+        isExistAlready = true;
+        break;
+      }
+    }
+
+    if (modelTourItem != null && isExistAlready == false) {
+      //마지막날에 추가
+      _listModelTourItem[_listModelTourItem.length - 1].add(modelTourItem);
       //새로고침
       notifyListeners();
 
       //내 장바구니에 추가
-      addTourItemToTourCourse(modelTourItem, 0, _listModelTourItem.length-1); //todo 김용찬 현재 테스트 중, 0으로 고정
+      addTourItemToTourCourse(modelTourItem, _listModelTourItem.length - 1, _listModelTourItem.length - 1);
+    }
+  }
+
+  addModelTourItem(ModelTourItem modelTourItem, int day, int level, {bool isNotify = true}) {
+
+    if (day >= _listModelTourItem.length) {
+
+      //부족한만큼 생성
+      for (int i = 0; i < day - _listModelTourItem.length + 1; i++) {
+        _listModelTourItem.add([]);
+      }
+    }
+
+    _listModelTourItem[day].add(modelTourItem);
+
+    if (isNotify) {
+      notifyListeners();
     }
   }
 
@@ -216,7 +260,10 @@ class ProviderCourseCart extends ChangeNotifier {
     return null;
   }
 
-  List<ModelTourItem> get listModelTourItem => _listModelTourItem;
+  String get title => _title;
+
+
+  List<List<ModelTourItem>> get listModelTourItem => _listModelTourItem;
 
   List<ModelDirection> get listModelDirection => _listModelDirection;
 }

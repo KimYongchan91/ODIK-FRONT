@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/model_user.dart';
 import 'package:odik/const/value/key.dart';
 import 'package:odik/service/util/util_http.dart';
@@ -31,7 +33,10 @@ class ProviderUser extends ChangeNotifier {
       //로그인 성공
       if (response[keyResult] == keyOk) {
         ModelUser modelUser = ModelUser.fromJson(response);
-        _changeModelUser(modelUser);
+        await _changeModelUser(modelUser);
+
+        jobAfterLogin();
+
         return true;
 
         //로그인 실패
@@ -60,9 +65,45 @@ class ProviderUser extends ChangeNotifier {
       ModelUser modelUser = ModelUser.fromJson(jsonDecode(data));
       await _changeModelUser(modelUser, isSaveOnLocal: false);
 
+      jobAfterLogin();
+
       //서버에서 유효한 계정인지 확인
       _checkIsValidAccount();
     }
+  }
+
+  ///로그인 후 공통 작업
+  jobAfterLogin() async {
+    //장바구니 불러오기
+
+    String url = "$urlBaseTest/user/course";
+    Map data = {};
+
+    try {
+      Map<String, dynamic> response = await requestHttpStandard(url, data, methodType: MethodType.get);
+      //log("장바구니 조회 결과 : ${response.toString()}");
+
+      // 성공
+      if (response[keyResult] == keyOk) {
+        MyApp.providerCourseCart.changeTitle(response[keyTitle], isNotify: false);
+
+        for (var element in ((response[keyTourCourseItemLists] ?? []) as List)) {
+          ModelTourItem modelTourItem = ModelTourItem.fromJson(element[keyTourItem]);
+          MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
+          MyApp.providerCourseCart
+              .addModelTourItem(modelTourItem, element[keyDay], element[keyLevel], isNotify: false);
+        }
+
+        MyApp.providerCourseCart.notifyListeners();
+
+        // 실패
+      } else {}
+    } catch (e) {
+      //오류 발생
+      MyApp.logger.wtf('오류 발생 : ${e.toString()}');
+    }
+
+    return;
   }
 
   _checkIsValidAccount() async {
@@ -72,7 +113,7 @@ class ProviderUser extends ChangeNotifier {
     Map data = {};
 
     try {
-      Map<String, dynamic> response = await requestHttpStandard(url, data,methodType: MethodType.get);
+      Map<String, dynamic> response = await requestHttpStandard(url, data, methodType: MethodType.get);
       MyApp.logger.d("자동 로그인 응답 결과 : ${response.toString()}");
 
       //로그인 성공

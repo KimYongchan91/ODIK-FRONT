@@ -37,7 +37,7 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                 Consumer<ProviderUser>(
                   builder: (context, value, child) => value.modelUser != null
                       ? Text(
-                          value.modelUser!.id.split("&lt").first,
+                          value.modelUser!.nickName ?? value.modelUser!.id.split("&lt").first,
                           style: const CustomTextStyle.bigBlackBold(),
                         )
                       : Padding(
