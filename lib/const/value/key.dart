@@ -56,8 +56,9 @@ const String keyInvalid = 'INVALID';
 const String keyDateCreate = "date_create";
 const String keyDateModify = "date_modify";
 
+const String keyTourCourse = "tour_course";
 const String keyTourCourseIdx = "tour_course_idx";
-const String keyTourCourseItemLists = "tour_course_item_lists";
+const String keyTourItems = "tour_items";
 
 const String keyTourItem = "tour_item";
 const String keyTourItemIdx = "tour_item_idx";

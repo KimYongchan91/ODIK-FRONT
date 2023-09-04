@@ -8,9 +8,12 @@ import 'package:odik/const/value/key.dart';
 import 'package:odik/service/util/util_http.dart';
 import 'package:odik/service/util/util_snackbar.dart';
 
+import '../../const/model/model_tour_course.dart';
 import '../../const/value/test.dart';
 import '../../my_app.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../util/util_tour_course.dart';
 
 class ProviderUser extends ChangeNotifier {
   final FlutterSecureStorage flutterSecureStorage = const FlutterSecureStorage();
@@ -74,34 +77,7 @@ class ProviderUser extends ChangeNotifier {
 
   ///로그인 후 공통 작업
   jobAfterLogin() async {
-    //장바구니 불러오기
-
-    String url = "$urlBaseTest/user/course";
-    Map data = {};
-
-    try {
-      Map<String, dynamic> response = await requestHttpStandard(url, data, methodType: MethodType.get);
-      //log("장바구니 조회 결과 : ${response.toString()}");
-
-      // 성공
-      if (response[keyResult] == keyOk) {
-        MyApp.providerCourseCart.changeTitle(response[keyTitle], isNotify: false);
-
-        for (var element in ((response[keyTourCourseItemLists] ?? []) as List)) {
-          ModelTourItem modelTourItem = ModelTourItem.fromJson(element[keyTourItem]);
-          MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
-          MyApp.providerCourseCart
-              .addModelTourItem(modelTourItem, element[keyDay], element[keyLevel], isNotify: false);
-        }
-
-        MyApp.providerCourseCart.notifyListeners();
-
-        // 실패
-      } else {}
-    } catch (e) {
-      //오류 발생
-      MyApp.logger.wtf('오류 발생 : ${e.toString()}');
-    }
+    MyApp.providerCourseCart.initTourCourseMy();
 
     return;
   }

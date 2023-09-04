@@ -23,6 +23,8 @@ import '../../const/model/place/model_place_auto_complete.dart';
 import '../../my_app.dart';
 import 'dart:developer';
 
+import '../../service/util/util_num.dart';
+
 const Color colorPrimary = Colors.orange;
 double sizeImageGoogleMap = 80;
 
@@ -278,7 +280,6 @@ class _ScreenMainState extends State<ScreenMainMap> {
                                 await MyApp.runAddToCartAnimation(MyApp.keyButtonAddCart);
 
                                 MyApp.providerCourseCart.addPlace(valueNotifierModelPlace.value!);
-
                               },
                               child: Card(
                                 child: Stack(
@@ -442,14 +443,13 @@ class _ScreenMainState extends State<ScreenMainMap> {
     }
 
     String? type;
-    List typesBody =  mapResult['result']?['types'] as List;
+    List typesBody = mapResult['result']?['types'] as List;
     for (var element in typesBody) {
-      if(mapPlaceType.keys.contains(element)){
+      if (mapPlaceType.keys.contains(element)) {
         type = element;
         break;
       }
     }
-
 
     try {
       ModelPlace modelPlace = ModelPlace(
@@ -458,13 +458,13 @@ class _ScreenMainState extends State<ScreenMainMap> {
 
         type: type,
         listUrlImage: listUrlImage,
-        pointGoogle: mapResult['result']?['rating'],
+        pointGoogle: getDoubleFromDynamic(mapResult['result']?['rating'] ?? 0),
         //
         phoneNumber: mapResult['result']?['formatted_phone_number'],
         //
         address: mapResult['result']?['formatted_address'],
-        locationLat: mapResult['result']?['geometry']?['location']?['lat'],
-        locationLng: mapResult['result']?['geometry']?['location']?['lng'],
+        locationLat: getDoubleFromDynamic(mapResult['result']?['geometry']?['location']?['lat']),
+        locationLng: getDoubleFromDynamic(mapResult['result']?['geometry']?['location']?['lng']),
       );
 
       valueNotifierModelPlace.value = modelPlace;

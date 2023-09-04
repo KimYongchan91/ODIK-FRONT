@@ -4,7 +4,7 @@ import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_place.dart';
 import 'package:odik/custom/custom_text_style.dart';
 
-const double _sizeImagePlace = 100;
+const double _sizeImagePlace = 60;
 
 class ItemTourItemForCart extends StatelessWidget {
   final ModelTourItem modelTourItem;

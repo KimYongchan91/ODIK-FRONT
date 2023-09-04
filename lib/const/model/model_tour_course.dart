@@ -7,7 +7,7 @@ import '../../service/util/util_date_time.dart';
 
 class ModelTourCourse {
   final int idx;
-  final String title;
+   String title;
   final ModelUserCore modelUserCore;
   final DateTime dateTimeCreate;
   final DateTime? dateTimeModify;

@@ -19,18 +19,6 @@ TourCourseType getTourCourseType(String? state) {
   }
 }
 
-addTourItemToTourCourse(ModelTourItem modelTourItem, int day, int level) async {
-  //먼저 내 장바구니가 있는지 조회
-  ModelTourCourse? modelTourCourseMy = await getTourCourseMy();
-  if (modelTourCourseMy != null) {
-    //장바구니가 있음
-    //장바구니에 추가
-    addTourItemToTourCourseWithServer(modelTourCourseMy, modelTourItem, day,level);
-  } else {
-    //장바구니가 없음
-  }
-}
-
 ///내 코스(장바구니) 조회
 Future<ModelTourCourse?> getTourCourseMy() async {
   String url = "$urlBaseTest/user/course";
@@ -40,9 +28,9 @@ Future<ModelTourCourse?> getTourCourseMy() async {
     MyApp.logger.d("내 장바구니 조회 응답결과 : ${response.toString()}");
 
     //todo 김용찬 idx가 아닌 result로 구별하자
-    if (response[keyIdx] != null) {
+    if (response[keyTourCourse][keyIdx] != null) {
       //내 장바구니가 있음
-      ModelTourCourse modelTourCourseMy = ModelTourCourse.fromJson(response);
+      ModelTourCourse modelTourCourseMy = ModelTourCourse.fromJson(response[keyTourCourse]);
       return modelTourCourseMy;
     } else {
       //내 장바구니가 없음
@@ -56,12 +44,16 @@ Future<ModelTourCourse?> getTourCourseMy() async {
 }
 
 ///장바구니에 아이템 추가
-Future addTourItemToTourCourseWithServer(
-    ModelTourCourse modelTourCourse, ModelTourItem modelTourItem, int day, int level) async {
-  String url = "$urlBaseTest/user/course/add_tour_item";
+Future addTourItemToTourCourseWithServer(ModelTourItem modelTourItem, int day, int level) async {
 
+  if(MyApp.providerCourseCart.modelTourCourseMy == null){
+    MyApp.logger.wtf("MyApp.providerCourseCart.modelTourCourseMy == null");
+    return;
+  }
+
+  String url = "$urlBaseTest/user/course/add_tour_item";
   Map<String, dynamic> mapData = {
-    keyTourCourseIdx: modelTourCourse.idx,
+    keyTourCourseIdx: MyApp.providerCourseCart.modelTourCourseMy!.idx,
     keyTourItemIdx: modelTourItem.idx,
     keyDay: day,
     keyLevel: level,
@@ -70,7 +62,6 @@ Future addTourItemToTourCourseWithServer(
   try {
     Map<String, dynamic> response = await requestHttpStandard(url, mapData, methodType: MethodType.post);
     MyApp.logger.d("장바구니에 관광지 추가 응답결과 : ${response.toString()}");
-
   } catch (e) {
     //오류 발생
     MyApp.logger.wtf("장바구니에 관광지 추가 실패 : ${e.toString()}");
