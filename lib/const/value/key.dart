@@ -53,6 +53,8 @@ const String keyWrongCode = 'WRONG_CODE';
 const String keyValid = 'VALID';
 const String keyInvalid = 'INVALID';
 
+const String keyRating = "rating";
+const String keyContent = "content";
 const String keyDateCreate = "date_create";
 const String keyDateModify = "date_modify";
 

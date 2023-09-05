@@ -19,14 +19,14 @@ import '../util/util_http.dart';
 import '../util/util_tour_course.dart';
 import '../util/util_tour_item.dart';
 
-class ProviderCourseCart extends ChangeNotifier {
+class ProviderTourCourseCart extends ChangeNotifier {
   ModelTourCourse? _modelTourCourseMy;
   final List<List<ModelTourItem>> _listModelTourItem = [];
   final List<ModelDirection> _listModelDirection = []; //길찾기 memory용
 
-  ProviderCourseCart() {
+  ProviderTourCourseCart() {
     //기본적으로 2개 생성해둠
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < maxCountTourCourseDay; i++) {
       _listModelTourItem.add([]);
     }
   }
@@ -115,13 +115,6 @@ class ProviderCourseCart extends ChangeNotifier {
   }
 
   addModelTourItem(ModelTourItem modelTourItem, int day, int level, {bool isNotify = true}) {
-    if (day >= _listModelTourItem.length) {
-      //부족한만큼 생성
-      for (int i = 0; i < day - _listModelTourItem.length + 1; i++) {
-        _listModelTourItem.add([]);
-      }
-    }
-
     _listModelTourItem[day].add(modelTourItem);
 
     if (isNotify) {

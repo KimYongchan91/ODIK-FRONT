@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/custom/custom_text_style.dart';
-import 'package:odik/service/provider/provider_course_cart.dart';
+import 'package:odik/service/provider/provider_tour_course_cart.dart';
 import 'package:odik/ui/item/item_direction.dart';
 import 'package:odik/ui/item/item_tour_item_cart_modify.dart';
 import 'package:odik/ui/route/route_cart_modify.dart';
@@ -41,7 +41,7 @@ class _RouteCartState extends State<RouteCart> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Consumer<ProviderCourseCart>(
+                Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) => Row(
                     children: [
                       Padding(
@@ -67,44 +67,52 @@ class _RouteCartState extends State<RouteCart> {
                     ],
                   ),
                 ),
-                Consumer<ProviderCourseCart>(
+                Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) {
                     return ListView.builder(
                       itemCount: provider.listModelTourItem.length,
-                      itemBuilder: (context, index) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding:
-                                EdgeInsets.only(top: index == 0 ? 10 : 30, left: 10, right: 10, bottom: 10),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '${index + 1}일차',
-                                  style: const CustomTextStyle.normalBlueBold(),
-                                ),
-                              ],
+                      itemBuilder: (context, index) {
+                        //뒤에 필요 없는 일차는 제거
+                        bool isDummy = false;
+                        if(isDummy){
+                          return Container();
+                        }
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding:
+                              EdgeInsets.only(top: index == 0 ? 10 : 30, left: 10, right: 10, bottom: 10),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '${index + 1}일차',
+                                    style: const CustomTextStyle.normalBlueBold(),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          ListView.separated(
-                            itemCount: provider.listModelTourItem[index].length,
-                            itemBuilder: (context, index2) => ItemTourItemForCart(
-                              provider.listModelTourItem[index][index2],
-                            ),
-                            separatorBuilder: (context, index2) =>
-                                index2 != provider.listModelTourItem[index].length - 1
-                                    ? ItemDirection(
-                                        modelTourItemOrigin: provider.listModelTourItem[index][index2],
-                                        modelTourItemOriginDestination: provider.listModelTourItem[index]
-                                            [index2 + 1],
-                                        directionType: DirectionType.car,
-                                      )
-                                    : Container(),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                          )
-                        ],
-                      ),
+                            ListView.separated(
+                              itemCount: provider.listModelTourItem[index].length,
+                              itemBuilder: (context, index2) => ItemTourItemForCart(
+                                provider.listModelTourItem[index][index2],
+                              ),
+                              separatorBuilder: (context, index2) =>
+                              index2 != provider.listModelTourItem[index].length - 1
+                                  ? ItemDirection(
+                                modelTourItemOrigin: provider.listModelTourItem[index][index2],
+                                modelTourItemOriginDestination: provider.listModelTourItem[index]
+                                [index2 + 1],
+                                directionType: DirectionType.car,
+                              )
+                                  : Container(),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                            )
+                          ],
+                        );
+                      },
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                     );

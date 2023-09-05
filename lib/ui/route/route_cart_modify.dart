@@ -1,12 +1,14 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:odik/const/model/place/model_direction.dart';
+import 'package:odik/const/value/tour_course.dart';
 import 'package:odik/custom/custom_text_style.dart';
-import 'package:odik/service/provider/provider_course_cart.dart';
+import 'package:odik/service/provider/provider_tour_course_cart.dart';
 import 'package:odik/ui/item/item_direction.dart';
 import 'package:odik/ui/item/item_tour_item_cart_modify.dart';
 import 'package:provider/provider.dart';
 
+import '../../const/model/model_tour_item.dart';
 import '../../my_app.dart';
 
 class RouteCartModify extends StatefulWidget {
@@ -37,30 +39,31 @@ class _RouteCartState extends State<RouteCartModify> {
         builder: (context, child) => SafeArea(
           child: Column(
             children: [
-              Consumer<ProviderCourseCart>(
+              Consumer<ProviderTourCourseCart>(
                 builder: (context, provider, child) => Text(
-                  provider.modelTourCourseMy?.title ??'장바구니',
+                  provider.modelTourCourseMy?.title ?? '장바구니',
                   style: const CustomTextStyle.bigBlackBold(),
                 ),
               ),
               Expanded(
-                child: Consumer<ProviderCourseCart>(
+                child: Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) {
-
-                    List<DragAndDropList> listDragAndDropList = [];
-
+                    List<List<ModelTourItem>> listListModelTourItem = [...provider.listModelTourItem];
+                    for(int i = 0 ; i <maxCountTourCourseDay - listListModelTourItem.length ; i++){
+                      listListModelTourItem.add([]);
+                    }
 
                     return DragAndDropLists(
                       children: [
-                        ...provider.listModelTourItem.asMap().entries.map(
-                              (entry) {
+                        ...listListModelTourItem.asMap().entries.map(
+                          (entry) {
                             return DragAndDropList(
                               header: Container(
                                 constraints: BoxConstraints(
                                   maxHeight: 120,
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -69,7 +72,8 @@ class _RouteCartState extends State<RouteCartModify> {
                                           Expanded(
                                             child: Text(
                                               '${entry.key}일차',
-                                              style: const CustomTextStyle.normalBlackBold().copyWith(color: Colors.redAccent),
+                                              style: const CustomTextStyle.normalBlackBold()
+                                                  .copyWith(color: Colors.redAccent),
                                             ),
                                           ),
                                         ],
@@ -79,7 +83,8 @@ class _RouteCartState extends State<RouteCartModify> {
                                 ),
                               ),
                               children: [
-                                ...entry.value.map((e) => DragAndDropItem(child: ItemTourItemForCartModify(e))),
+                                ...entry.value
+                                    .map((e) => DragAndDropItem(child: ItemTourItemForCartModify(e))),
                               ],
                               contentsWhenEmpty: Container(),
                               canDrag: true,
@@ -102,7 +107,7 @@ class _RouteCartState extends State<RouteCartModify> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),*/
                     );
-                  } ,
+                  },
                 ),
               )
             ],
