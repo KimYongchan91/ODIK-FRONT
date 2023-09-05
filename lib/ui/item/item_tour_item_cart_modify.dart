@@ -42,7 +42,7 @@ class ItemTourItemForCartModify extends StatelessWidget {
                           onTap: ()  async{
                             var result = await Get.dialog(const DialogDeleteTourItemForCart());
                             if(result == true){
-                              MyApp.providerCourseCart.deleteModelTourItem(modelTourItem);
+                              MyApp.providerCourseCartMy.deleteModelTourItem(modelTourItem);
                             }
                           },
                           child: const Padding(

@@ -35,7 +35,7 @@ class _ItemDirectionState extends State<ItemDirection> {
 
     valueNotifierDirectionType = ValueNotifier(widget.directionType);
 
-    futureGetDirection = MyApp.providerCourseCart.getModelDirection(
+    futureGetDirection = MyApp.providerCourseCartMy.getModelDirection(
       widget.modelTourItemOrigin,
       widget.modelTourItemOriginDestination,
       valueNotifierDirectionType.value,
@@ -122,7 +122,7 @@ class _ItemDirectionState extends State<ItemDirection> {
                                 valueNotifierDirectionType.value = e;
 
                                 setState(() {
-                                  futureGetDirection = MyApp.providerCourseCart.getModelDirection(
+                                  futureGetDirection = MyApp.providerCourseCartMy.getModelDirection(
                                     widget.modelTourItemOrigin,
                                     widget.modelTourItemOriginDestination,
                                     valueNotifierDirectionType.value,

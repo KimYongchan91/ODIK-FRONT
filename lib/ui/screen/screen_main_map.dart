@@ -279,7 +279,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
                               onTap: () async {
                                 await MyApp.runAddToCartAnimation(MyApp.keyButtonAddCart);
 
-                                MyApp.providerCourseCart.addPlace(valueNotifierModelPlace.value!);
+                                MyApp.providerCourseCartMy.addPlace(valueNotifierModelPlace.value!);
                               },
                               child: Card(
                                 child: Stack(

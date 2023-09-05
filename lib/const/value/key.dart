@@ -59,6 +59,7 @@ const String keyDateCreate = "date_create";
 const String keyDateModify = "date_modify";
 
 const String keyTourCourse = "tour_course";
+const String keyTourCourses = "tour_courses";
 const String keyTourCourseIdx = "tour_course_idx";
 const String keyTourItems = "tour_items";
 

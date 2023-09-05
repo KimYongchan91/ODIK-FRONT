@@ -35,7 +35,7 @@ class _RouteCartState extends State<RouteCart> {
     return Scaffold(
       body: MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(value: MyApp.providerCourseCart),
+          ChangeNotifierProvider.value(value: MyApp.providerCourseCartMy),
         ],
         builder: (context, child) => SafeArea(
           child: SingleChildScrollView(

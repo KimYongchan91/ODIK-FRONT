@@ -59,7 +59,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
           //for (var element in ((response["tour_course_item_lists"] ?? []) as List)) {
           ModelTourItem modelTourItem = ModelTourItem.fromJson(element[keyTourItem]);
           //MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
-          MyApp.providerCourseCart
+          MyApp.providerCourseCartMy
               .addModelTourItem(modelTourItem, element[keyDay], element[keyLevel], isNotify: false);
         }
 

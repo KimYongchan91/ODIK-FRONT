@@ -1,10 +1,8 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
-import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/const/value/tour_course.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/provider/provider_tour_course_cart.dart';
-import 'package:odik/ui/item/item_direction.dart';
 import 'package:odik/ui/item/item_tour_item_cart_modify.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +32,7 @@ class _RouteCartState extends State<RouteCartModify> {
     return Scaffold(
       body: MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(value: MyApp.providerCourseCart),
+          ChangeNotifierProvider.value(value: MyApp.providerCourseCartMy),
         ],
         builder: (context, child) => SafeArea(
           child: Column(

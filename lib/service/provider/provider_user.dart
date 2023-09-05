@@ -77,7 +77,9 @@ class ProviderUser extends ChangeNotifier {
 
   ///로그인 후 공통 작업
   jobAfterLogin() async {
-    MyApp.providerCourseCart.initTourCourseMy();
+    MyApp.providerCourseCartMy.initTourCourseMy();
+    MyApp.providerCoursePublicMy.setModelUserCore(modelUser!);
+    MyApp.providerCoursePublicMy.getAllTourCourse();
 
     return;
   }

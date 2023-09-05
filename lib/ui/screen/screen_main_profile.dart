@@ -50,6 +50,10 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                           ),
                         ),
                 ),
+
+               /* Consumer<ProviderUser>(
+                  builder: (context, value, child) => ,
+                )*/
               ],
             ),
           ),

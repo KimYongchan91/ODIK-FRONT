@@ -46,14 +46,14 @@ Future<ModelTourCourse?> getTourCourseMy() async {
 ///장바구니에 아이템 추가
 Future addTourItemToTourCourseWithServer(ModelTourItem modelTourItem, int day, int level) async {
 
-  if(MyApp.providerCourseCart.modelTourCourseMy == null){
+  if(MyApp.providerCourseCartMy.modelTourCourseMy == null){
     MyApp.logger.wtf("MyApp.providerCourseCart.modelTourCourseMy == null");
     return;
   }
 
   String url = "$urlBaseTest/user/course/add_tour_item";
   Map<String, dynamic> mapData = {
-    keyTourCourseIdx: MyApp.providerCourseCart.modelTourCourseMy!.idx,
+    keyTourCourseIdx: MyApp.providerCourseCartMy.modelTourCourseMy!.idx,
     keyTourItemIdx: modelTourItem.idx,
     keyDay: day,
     keyLevel: level,
