@@ -71,7 +71,7 @@ class _RouteCartState extends State<RouteCartModify> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              '${entry.key}일차',
+                                              '${entry.key+1}일차',
                                               style: const CustomTextStyle.normalBlackBold()
                                                   .copyWith(color: Colors.redAccent),
                                             ),

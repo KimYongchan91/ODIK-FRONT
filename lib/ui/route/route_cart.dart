@@ -73,7 +73,15 @@ class _RouteCartState extends State<RouteCart> {
                       itemCount: provider.listModelTourItem.length,
                       itemBuilder: (context, index) {
                         //뒤에 필요 없는 일차는 제거
-                        bool isDummy = false;
+                        bool isDummy = true;
+
+                        for(int i = index ; i <provider.listModelTourItem.length ; i++){
+                          if(provider.listModelTourItem[i].isNotEmpty){
+                            isDummy = false;
+                            break;
+                          }
+                        }
+
                         if(isDummy){
                           return Container();
                         }
