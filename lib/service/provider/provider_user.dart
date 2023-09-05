@@ -45,14 +45,14 @@ class ProviderUser extends ChangeNotifier {
         //로그인 실패
       } else {
         showSnackBarOnRoute(messageLoginFail);
-        _logout();
+        logout();
         return false;
       }
     } catch (e) {
       //오류 발생
       MyApp.logger.wtf('오류 발생 : ${e.toString()}');
       showSnackBarOnRoute(messageServerError);
-      _logout();
+      logout();
       return false;
     }
   }
@@ -77,7 +77,7 @@ class ProviderUser extends ChangeNotifier {
 
   ///로그인 후 공통 작업
   jobAfterLogin() async {
-    MyApp.providerCourseCartMy.initTourCourseMy();
+    MyApp.providerCourseCartMy.getAllTourItemInCart();
     MyApp.providerCoursePublicMy.setModelUserCore(modelUser!);
     MyApp.providerCoursePublicMy.getAllTourCourse();
 
@@ -102,13 +102,13 @@ class ProviderUser extends ChangeNotifier {
         //로그인 실패
       } else {
         showSnackBarOnRoute(messageNeedReLogin);
-        _logout();
+        logout();
       }
     } catch (e) {
       //오류 발생
       MyApp.logger.wtf('오류 발생 : ${e.toString()}');
       showSnackBarOnRoute(messageNeedReLogin);
-      _logout();
+      logout();
     }
   }
 
@@ -128,11 +128,15 @@ class ProviderUser extends ChangeNotifier {
     }
   }
 
-  _logout() {
+  logout() {
     modelUser = null;
     notifyListeners();
 
     //로컬에서 삭제
     flutterSecureStorage.delete(key: keyUserLastLogin);
+
+    //장바구니 및 내 코스 초기화
+    MyApp.providerCoursePublicMy.clearProvider();
+    MyApp.providerCourseCartMy.clearProvider();
   }
 }

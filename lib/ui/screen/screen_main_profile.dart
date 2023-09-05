@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:odik/const/value/router.dart';
 import 'package:odik/service/provider/provider_user.dart';
+import 'package:odik/ui/route/route_profile_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import '../../custom/custom_text_style.dart';
@@ -36,9 +37,14 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                 ),
                 Consumer<ProviderUser>(
                   builder: (context, value, child) => value.modelUser != null
-                      ? Text(
-                          value.modelUser!.nickName ?? value.modelUser!.id.split("&lt").first,
-                          style: const CustomTextStyle.bigBlackBold(),
+                      ? InkWell(
+                          onTap: () {
+                            Get.to(() => RouteProfileDetail());
+                          },
+                          child: Text(
+                            value.modelUser!.nickName ?? value.modelUser!.id.split("&lt").first,
+                            style: const CustomTextStyle.bigBlackBold(),
+                          ),
                         )
                       : Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -51,7 +57,7 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                         ),
                 ),
 
-               /* Consumer<ProviderUser>(
+                /* Consumer<ProviderUser>(
                   builder: (context, value, child) => ,
                 )*/
               ],

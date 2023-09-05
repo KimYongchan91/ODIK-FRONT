@@ -25,15 +25,23 @@ class ProviderTourCourseCart extends ChangeNotifier {
   final List<ModelDirection> _listModelDirection = []; //길찾기 memory용
 
   ProviderTourCourseCart() {
-    //기본적으로 2개 생성해둠
+    _init();
+  }
+
+
+
+  _init(){
+//기본적으로 2개 생성해둠
     for (int i = 0; i < maxCountTourCourseDay; i++) {
       _listModelTourItem.add([]);
     }
   }
 
-  initTourCourseMy() async {
+
+
+  getAllTourItemInCart() async {
     //먼저 내 장바구니가 있는지 조회
-    ModelTourCourse? modelTourCourseMy = await getTourCourseMy();
+    ModelTourCourse? modelTourCourseMy = await getTourCourseCartMy();
     if (modelTourCourseMy != null) {
       _modelTourCourseMy = modelTourCourseMy;
       //장바구니가 있음
@@ -48,7 +56,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
     try {
       Map<String, dynamic> response = await requestHttpStandard(url, data, methodType: MethodType.get);
-      //log("장바구니 조회 결과 : ${response.toString()}");
+      log("장바구니 조회 결과 : ${response.toString()}");
 
       // 성공
       if (response[keyResult] == keyOk) {
@@ -59,8 +67,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
           //for (var element in ((response["tour_course_item_lists"] ?? []) as List)) {
           ModelTourItem modelTourItem = ModelTourItem.fromJson(element[keyTourItem]);
           //MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
-          MyApp.providerCourseCartMy
-              .addModelTourItem(modelTourItem, element[keyDay], element[keyLevel], isNotify: false);
+          _addModelTourItem(modelTourItem, element[keyDay], element[keyLevel], isNotify: false);
         }
 
         notifyListeners();
@@ -114,7 +121,8 @@ class ProviderTourCourseCart extends ChangeNotifier {
     }
   }
 
-  addModelTourItem(ModelTourItem modelTourItem, int day, int level, {bool isNotify = true}) {
+  _addModelTourItem(ModelTourItem modelTourItem, int day, int level, {bool isNotify = true}) {
+    MyApp.logger.d("_addModelTourItem _listModelTourItem.length : ${_listModelTourItem.length}, day : ${day}, level : ${level}");
     _listModelTourItem[day].add(modelTourItem);
 
     if (isNotify) {
@@ -384,6 +392,12 @@ class ProviderTourCourseCart extends ChangeNotifier {
     }
 
     return null;
+  }
+
+  clearProvider() {
+    _listModelTourItem.clear();
+    _init();
+    notifyListeners();
   }
 
   ModelTourCourse? get modelTourCourseMy => _modelTourCourseMy;

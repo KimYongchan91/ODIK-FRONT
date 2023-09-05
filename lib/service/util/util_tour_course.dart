@@ -20,7 +20,7 @@ TourCourseType getTourCourseType(String? state) {
 }
 
 ///내 코스(장바구니) 조회
-Future<ModelTourCourse?> getTourCourseMy() async {
+Future<ModelTourCourse?> getTourCourseCartMy() async {
   String url = "$urlBaseTest/user/course";
 
   try {
