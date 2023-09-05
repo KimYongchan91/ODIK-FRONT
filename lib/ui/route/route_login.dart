@@ -64,6 +64,13 @@ class _RouteLoginState extends State<RouteLogin> {
                   },
                   child: Text('테스트 계정 정보 입력'),
                 ),
+                ElevatedButton(
+                  onPressed: () {
+                    textEditingControllerId.text = 'yczine@gmail.com';
+                    textEditingControllerPss.text = '123123asd!';
+                  },
+                  child: Text('김용찬 계정 정보 입력'),
+                ),
                 const SizedBox(
                   height: 20,
                 ),

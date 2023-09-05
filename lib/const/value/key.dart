@@ -36,6 +36,7 @@ const String keyReferenceIdGoogle = "reference_id_google";
 const String keyType = "type";
 const String keyPointGoogle = "point_google";
 const String keyImagesGoogle = "images_google";
+const String keyPhone = "phone";
 const String keyPhoneNumber = "phone_number";
 const String keyAddress = "address";
 const String keyLocationLat = "location_lat";

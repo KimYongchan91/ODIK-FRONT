@@ -41,9 +41,20 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                           onTap: () {
                             Get.to(() => RouteProfileDetail());
                           },
-                          child: Text(
-                            value.modelUser!.nickName ?? value.modelUser!.id.split("&lt").first,
-                            style: const CustomTextStyle.bigBlackBold(),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.person_2_rounded,
+                                  size: 48,
+                                ),
+                                Text(
+                                  '${value.modelUser!.nickName ?? value.modelUser!.id.split("&lt").first} >',
+                                  style: const CustomTextStyle.bigBlackBold(),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       : Padding(

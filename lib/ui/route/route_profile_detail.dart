@@ -30,7 +30,6 @@ class _RouteProfileDetailState extends State<RouteProfileDetail> {
                 Text('${value.modelUser?.nickName}'),
 
                 //로그아웃
-
                 InkWell(
                   onTap: () {
                     value.logout();

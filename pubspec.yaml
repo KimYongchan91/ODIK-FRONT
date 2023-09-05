@@ -103,6 +103,8 @@ dependencies:
   flutter_naver_login: ^1.8.0
   flutter_secure_storage: ^8.0.0
   mini_server: ^1.1.0
+  flutter_multi_formatter: ^2.11.7
+  email_validator: ^2.1.17
 
 
   firebase_analytics: ^10.4.3
