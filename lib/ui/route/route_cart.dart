@@ -1,13 +1,16 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/provider/provider_course_cart.dart';
 import 'package:odik/ui/item/item_direction.dart';
-import 'package:odik/ui/item/item_tour_item_for_cart.dart';
+import 'package:odik/ui/item/item_tour_item_cart_modify.dart';
+import 'package:odik/ui/route/route_cart_modify.dart';
 import 'package:provider/provider.dart';
 
 import '../../my_app.dart';
+import '../item/item_tour_item_cart.dart';
 
 class RouteCart extends StatefulWidget {
   const RouteCart({super.key});
@@ -35,71 +38,80 @@ class _RouteCartState extends State<RouteCart> {
           ChangeNotifierProvider.value(value: MyApp.providerCourseCart),
         ],
         builder: (context, child) => SafeArea(
-          child: Column(
-            children: [
-              Consumer<ProviderCourseCart>(
-                builder: (context, provider, child) => Text(
-                  provider.modelTourCourseMy?.title ??'장바구니',
-                  style: const CustomTextStyle.bigBlackBold(),
-                ),
-              ),
-              Expanded(
-                child: Consumer<ProviderCourseCart>(
-                  builder: (context, provider, child) => DragAndDropLists(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Consumer<ProviderCourseCart>(
+                  builder: (context, provider, child) => Row(
                     children: [
-                      ...provider.listModelTourItem.asMap().entries.map(
-                        (entry) {
-                          return DragAndDropList(
-                            header: Container(
-                              constraints: BoxConstraints(
-                                maxHeight: 120,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            '${entry.key}일차',
-                                            style: const CustomTextStyle.normalBlackBold().copyWith(color: Colors.redAccent),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            children: [
-                              ...entry.value.map((e) => DragAndDropItem(child: ItemTourItemForCart(e))),
-                            ],
-                            contentsWhenEmpty: Container(),
-                            canDrag: true,
-                          );
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          provider.modelTourCourseMy?.title ?? '장바구니',
+                          style: const CustomTextStyle.bigBlackBold(),
+                        ),
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () {
+                          Get.to(() => const RouteCartModify());
                         },
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            '편집',
+                            style: CustomTextStyle.normalGreyBold(),
+                          ),
+                        ),
                       )
                     ],
-                    onItemReorder: provider.onItemReorder,
-                    onListReorder: provider.onListReorder,
-                    scrollController: scrollController,
-                    contentsWhenEmpty: Container(),
-/*                    separatorBuilder: (context, index) => index != provider.listModelTourItem.length - 1
-                          ? ItemDirection(
-                              modelTourItemOrigin: provider.listModelTourItem[index],
-                              modelTourItemOriginDestination: provider.listModelTourItem[index + 1],
-                              directionType: DirectionType.car, //todo 김용찬 DirectionType 기본값
-                            )
-                          : Container(),
-                      itemCount: provider.listModelTourItem.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),*/
                   ),
                 ),
-              )
-            ],
+                Consumer<ProviderCourseCart>(
+                  builder: (context, provider, child) {
+                    return ListView.builder(
+                      itemCount: provider.listModelTourItem.length,
+                      itemBuilder: (context, index) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: index == 0 ? 10 : 30, left: 10, right: 10, bottom: 10),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${index + 1}일차',
+                                  style: const CustomTextStyle.normalBlueBold(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ListView.separated(
+                            itemCount: provider.listModelTourItem[index].length,
+                            itemBuilder: (context, index2) => ItemTourItemForCart(
+                              provider.listModelTourItem[index][index2],
+                            ),
+                            separatorBuilder: (context, index2) =>
+                                index2 != provider.listModelTourItem[index].length - 1
+                                    ? ItemDirection(
+                                        modelTourItemOrigin: provider.listModelTourItem[index][index2],
+                                        modelTourItemOriginDestination: provider.listModelTourItem[index]
+                                            [index2 + 1],
+                                        directionType: DirectionType.car,
+                                      )
+                                    : Container(),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          )
+                        ],
+                      ),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                    );
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

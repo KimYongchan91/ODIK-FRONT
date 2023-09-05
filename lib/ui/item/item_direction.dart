@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_direction.dart';
+import 'package:expandable/expandable.dart';
+import 'package:odik/custom/custom_text_style.dart';
 
 import '../../my_app.dart';
 
@@ -50,8 +52,49 @@ class _ItemDirectionState extends State<ItemDirection> {
         } else {
           final ModelDirection modelDirection = snapshot.data!;
 
-          return Container(
-            child: Column(
+          return ExpandablePanel(
+            theme: const ExpandableThemeData(
+              hasIcon: false,
+            ),
+            header: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: ValueListenableBuilder(
+                  valueListenable: valueNotifierDirectionType,
+                  builder: (context, value, child) {
+                    String labelType;
+                    switch (value) {
+                      case DirectionType.car:
+                        labelType = '자동차로';
+                      case DirectionType.transit:
+                        labelType = '대중교통으로';
+                      case DirectionType.walk:
+                        labelType = '도보로';
+                    }
+
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$labelType ${modelDirection.duration ~/ 60}분 이동',
+                          style: const CustomTextStyle.smallBlackBold().copyWith(color: Colors.blueAccent),
+                        ),
+                        const SizedBox(
+                          width: 3,
+                        ),
+                        const Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: Colors.blueAccent,
+                        )
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+            collapsed: Container(),
+            expanded: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ValueListenableBuilder(
@@ -76,7 +119,6 @@ class _ItemDirectionState extends State<ItemDirection> {
                             }
                             return InkWell(
                               onTap: () {
-
                                 valueNotifierDirectionType.value = e;
 
                                 setState(() {
@@ -110,6 +152,7 @@ class _ItemDirectionState extends State<ItemDirection> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        Row(),
                         Text('거리 : ${(modelDirection.distance / 1000).toStringAsFixed(1)}km'),
                         Text('소요 시간 : ${modelDirection.duration ~/ 60}분'),
                         Text('택시 요금 : ${modelDirection.fareTaxi}원'),
@@ -117,7 +160,7 @@ class _ItemDirectionState extends State<ItemDirection> {
                       ],
                     );
                   } else if (valueNotifierDirectionType.value == DirectionType.transit) {
-                    if(modelDirection.listTransitPlan.isEmpty){
+                    if (modelDirection.listTransitPlan.isEmpty) {
                       return Container();
                     }
                     return Column(
@@ -140,6 +183,7 @@ class _ItemDirectionState extends State<ItemDirection> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(),
                         Text('거리 : ${(modelDirection.distance / 1000).toStringAsFixed(1)}km'),
                         Text('소요 시간 : ${modelDirection.duration ~/ 60}분'),
                       ],

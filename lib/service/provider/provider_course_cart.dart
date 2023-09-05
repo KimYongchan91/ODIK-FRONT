@@ -326,6 +326,8 @@ class ProviderCourseCart extends ChangeNotifier {
               modelTourItemOrigin: modelTourItemOrigin,
               modelTourItemDestination: modelTourItemDestination,
               directionType: directionType,
+              distance: listModelDirectionTransitPlan.first.distanceTotal,
+              duration: listModelDirectionTransitPlan.first.durationTotal,
               listTransitPlan: listModelDirectionTransitPlan,
             );
 
