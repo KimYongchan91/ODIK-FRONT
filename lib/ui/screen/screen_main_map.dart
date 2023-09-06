@@ -20,9 +20,11 @@ import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 
 import '../../const/model/place/model_place.dart';
 import '../../const/model/place/model_place_auto_complete.dart';
+import '../../const/value/key.dart';
 import '../../my_app.dart';
 import 'dart:developer';
 
+import '../../service/util/util_http.dart';
 import '../../service/util/util_num.dart';
 
 const Color colorPrimary = Colors.orange;
@@ -366,10 +368,11 @@ class _ScreenMainState extends State<ScreenMainMap> {
   Future<List<ModelPlaceAutoComplete>> _searchAutoComplete(String keyword) async {
     List<ModelPlaceAutoComplete> listPlaceAutoComplete = [];
 
-    String url =
+    ///구글맵 api 사용 부분
+    String urlGoogleMapApi =
         'https://maps.googleapis.com/maps/api/place/queryautocomplete/json?input=$keyword&language=ko&key=AIzaSyDeGTGjfDq6K5qFJXEXz2qvthzNNLM2zXU';
 
-    http.Response response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
+    http.Response response = await http.get(Uri.parse(urlGoogleMapApi)).timeout(const Duration(seconds: 10));
 
     final Pattern unicodePattern = RegExp(r'\\u([0-9A-Fa-f]{4})');
     final String newStr = response.body.replaceAllMapped(unicodePattern, (Match unicodeMatch) {
@@ -380,8 +383,8 @@ class _ScreenMainState extends State<ScreenMainMap> {
 
     //MyApp.logger.d("응답 결과 : $newStr");
 
-    Map<String, dynamic> data = jsonDecode(newStr);
-    List listData = data["predictions"];
+    Map<String, dynamic> dataNewStr = jsonDecode(newStr);
+    List listData = dataNewStr["predictions"];
     //MyApp.logger.d("원본 리스트 개수 : ${listData.length}");
 
     for (var element in listData) {
@@ -393,6 +396,28 @@ class _ScreenMainState extends State<ScreenMainMap> {
     //MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.length}");
     //MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.toString()}");
 
+    ///odik api 사용 부분
+    String keywordFormatted = keyword.trim().replaceAll("  ", " ");
+
+    String urlOdikApi = "$urlBaseTest/tour/course?keyword=$keywordFormatted&order=like"; //todo 김용찬 order 수정
+    String urlOdikApiEncoded = Uri.encodeFull(urlOdikApi);
+    MyApp.logger.d("urlOdikApiEncoded : $urlOdikApiEncoded");
+    Map data = {};
+
+/*    try {
+      Map<String, dynamic> response = await requestHttpStandard(urlOdikApi, data);
+      MyApp.logger.d("관광지 생성 응답결과 : ${response.toString()}");
+
+      //로그인 성공
+      if (response[keyResult] == keyOk) {
+        MyApp.logger.d("관광지 생성에 성공했습니다.");
+      } else {
+        MyApp.logger.wtf("관광지 생성에 실패했습니다.");
+      }
+    } catch (e) {
+      //오류 발생
+      MyApp.logger.wtf("관광지 생성에 실패 : ${e.toString()}");
+    }*/
     return listPlaceAutoComplete;
   }
 

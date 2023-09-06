@@ -5,6 +5,8 @@ import 'package:odik/const/model/place/model_direction.dart';
 import 'package:odik/const/value/tour_course.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/provider/provider_tour_course_cart.dart';
+import 'package:odik/service/util/util_snackbar.dart';
+import 'package:odik/ui/dialog/dialog_request_confirm.dart';
 import 'package:odik/ui/item/item_direction.dart';
 import 'package:odik/ui/item/item_tour_item_cart_modify.dart';
 import 'package:odik/ui/route/route_cart_modify.dart';
@@ -152,6 +154,25 @@ class _RouteCartState extends State<RouteCart> {
   }
 
   changeTourCourseState() async {
-    MyApp.providerCourseCartMy.changeTourCourseWithServer(tourCourseStateType: TourCourseStateType.public);
+    if (MyApp.providerCourseCartMy.listModelTourItem.isEmpty) {
+      showSnackBarOnRoute('코스가 비었어요.');
+      return;
+    }
+
+    var result = await Get.dialog(const DialogRequestConfirm(
+      content: '코스를 공개할까요?',
+      labelButton: "공개",
+    ));
+    if (result == true) {
+      //공개로 전환
+      await MyApp.providerCourseCartMy
+          .changeTourCourseWithServer(tourCourseStateType: TourCourseStateType.public);
+
+      //카트 초기화
+      MyApp.providerCourseCartMy.clearProvider();
+
+      //카트 받아오기
+      MyApp.providerCourseCartMy.getCart();
+    }
   }
 }

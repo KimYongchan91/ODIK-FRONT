@@ -16,7 +16,7 @@ import 'package:odik/ui/widget/button_standard.dart';
 
 import '../../my_app.dart';
 import '../../service/util/util_http.dart';
-import '../dialog/dialog_close_route.dart';
+import '../dialog/dialog_request_confirm.dart';
 
 enum EmailVerifyStateType {
   yet, //인증번호 발송 전
@@ -483,7 +483,7 @@ class _RouteJoinState extends State<RouteJoin> {
   }
 
   Future<bool> onWillPop() async {
-    var result = await Get.dialog(const DialogCloseRoute(
+    var result = await Get.dialog(const DialogRequestConfirm(
       content: '저장하지 않고 나갈까요?',
       labelButton: '나가기',
     ));

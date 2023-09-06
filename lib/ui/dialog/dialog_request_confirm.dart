@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import '../../../custom/custom_text_style.dart';
 import '../../../my_app.dart';
 
-class DialogCloseRoute extends StatelessWidget {
+class DialogRequestConfirm extends StatelessWidget {
   final String content;
   final String labelButton;
 
-  const DialogCloseRoute({super.key, this.content = '종료하시겠습니까?', this.labelButton = '종료'});
+  const DialogRequestConfirm({super.key, this.content = '종료하시겠습니까?', this.labelButton = '종료'});
 
   @override
   Widget build(BuildContext context) {
