@@ -7,11 +7,11 @@ import '../../service/util/util_date_time.dart';
 
 class ModelTourCourse {
   final int idx;
-   String title;
+  String title;
   final ModelUserCore modelUserCore;
   final DateTime dateTimeCreate;
   final DateTime? dateTimeModify;
-  final TourCourseType tourCourseType;
+  final TourCourseStateType tourCourseStateType;
 
   //final String location;
   //final int expense;
@@ -25,5 +25,5 @@ class ModelTourCourse {
         dateTimeModify = getDateTimeFromDynamicData(json[keyDateModify]),
 
         //email을 key로
-        tourCourseType = getTourCourseType(json[keyState]);
+        tourCourseStateType = getTourCourseStateType(json[keyState]);
 }

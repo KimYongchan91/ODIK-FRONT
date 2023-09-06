@@ -41,44 +41,50 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
 
   MyApp.logger.d(""
       "요청 url : $url\n"
+      "요청 method : ${methodType.toString().replaceAll("MethodType.","")}\n"
       "요청 header : $header\n"
       "요청 body : $requestBody");
 
-  http.Response response;
-  switch (methodType) {
-    case MethodType.get:
-      response = await http.get(Uri.parse(url), headers: header).timeout(const Duration(seconds: 10));
-      break;
+  try {
+    http.Response response;
+    switch (methodType) {
+      case MethodType.get:
+        response = await http.get(Uri.parse(url), headers: header).timeout(const Duration(seconds: 10));
+        break;
 
-    case MethodType.post:
-      response = await http
-          .post(Uri.parse(url), headers: header, body: requestBody)
-          .timeout(const Duration(seconds: 10));
-      break;
-    case MethodType.put:
-      response = await http
-          .put(Uri.parse(url), headers: header, body: requestBody)
-          .timeout(const Duration(seconds: 10));
-      break;
-    case MethodType.delete:
-      response = await http
-          .delete(Uri.parse(url), headers: header, body: requestBody)
-          .timeout(const Duration(seconds: 10));
-      break;
+      case MethodType.post:
+        response = await http
+            .post(Uri.parse(url), headers: header, body: requestBody)
+            .timeout(const Duration(seconds: 10));
+        break;
+      case MethodType.put:
+        response = await http
+            .put(Uri.parse(url), headers: header, body: requestBody)
+            .timeout(const Duration(seconds: 10));
+        break;
+      case MethodType.delete:
+        response = await http
+            .delete(Uri.parse(url), headers: header, body: requestBody)
+            .timeout(const Duration(seconds: 10));
+        break;
+    }
+
+    String responseBody;
+    if (isNeedDecodeUnicode) {
+      responseBody = response.body.replaceAllMapped(patternDecodeUnicode, (Match unicodeMatch) {
+        final int hexCode = int.parse(unicodeMatch.group(1)!, radix: 16);
+        final unicode = String.fromCharCode(hexCode);
+        return unicode;
+      });
+    } else {
+      responseBody = utf8.decode(response.bodyBytes);
+    }
+
+    Map<String, dynamic> responseBodyData = jsonDecode(responseBody);
+
+    return responseBodyData;
+  } catch (e) {
+    MyApp.logger.wtf("에러 발생 : ${e.toString()}");
+    rethrow;
   }
-
-  String responseBody;
-  if (isNeedDecodeUnicode) {
-    responseBody = response.body.replaceAllMapped(patternDecodeUnicode, (Match unicodeMatch) {
-      final int hexCode = int.parse(unicodeMatch.group(1)!, radix: 16);
-      final unicode = String.fromCharCode(hexCode);
-      return unicode;
-    });
-  } else {
-    responseBody = utf8.decode(response.bodyBytes);
-  }
-
-  Map<String, dynamic> responseBodyData = jsonDecode(responseBody);
-
-  return responseBodyData;
 }

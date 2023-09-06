@@ -28,11 +28,11 @@ class ProviderTourCoursePublic extends ChangeNotifier {
 
     try {
       Map<String, dynamic> response = await requestHttpStandard(url, data, methodType: MethodType.get);
-      //MyApp.logger.d("자동 로그인 응답 결과 : ${response.toString()}");
+      MyApp.logger.d("내 코든 코스 응답 결과 : ${response.toString()}");
 
       //성공
       if (response[keyResult] == keyOk) {
-        for (var element in ((response[keyTourCourses] ?? []) as List)) {
+        for (var element in ((response[keyTourCourses]?[keyContent] ?? []) as List)) {
           ModelTourCourse modelTourCourse = ModelTourCourse.fromJson(element);
           _listModelTourCourse.add(modelTourCourse);
         }

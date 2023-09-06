@@ -35,7 +35,7 @@ class ProviderUser extends ChangeNotifier {
 
       //로그인 성공
       if (response[keyResult] == keyOk) {
-        ModelUser modelUser = ModelUser.fromJson(response);
+        ModelUser modelUser = ModelUser.fromJson(response[keyUser]);
         await _changeModelUser(modelUser);
 
         jobAfterLogin();
@@ -77,7 +77,8 @@ class ProviderUser extends ChangeNotifier {
 
   ///로그인 후 공통 작업
   jobAfterLogin() async {
-    MyApp.providerCourseCartMy.getAllTourItemInCart();
+    MyApp.logger.d("jobAfterLogin 동작");
+    MyApp.providerCourseCartMy.getCart();
     MyApp.providerCoursePublicMy.setModelUserCore(modelUser!);
     MyApp.providerCoursePublicMy.getAllTourCourse();
 

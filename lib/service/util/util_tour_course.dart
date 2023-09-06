@@ -7,41 +7,19 @@ import '../../const/value/key.dart';
 import '../../const/value/test.dart';
 import '../../my_app.dart';
 
-TourCourseType getTourCourseType(String? state) {
+TourCourseStateType getTourCourseStateType(String? state) {
   if (state == keyCart) {
-    return TourCourseType.cart;
+    return TourCourseStateType.cart;
   } else if (state == keyPublic) {
-    return TourCourseType.public;
+    return TourCourseStateType.public;
   } else if (state == keyDelete) {
-    return TourCourseType.delete;
+    return TourCourseStateType.delete;
   } else {
-    return TourCourseType.error;
+    return TourCourseStateType.error;
   }
 }
 
-///내 코스(장바구니) 조회
-Future<ModelTourCourse?> getTourCourseCartMy() async {
-  String url = "$urlBaseTest/user/course";
 
-  try {
-    Map<String, dynamic> response = await requestHttpStandard(url, {}, methodType: MethodType.get);
-    //MyApp.logger.d("내 장바구니 조회 응답결과 : ${response.toString()}");
-
-    //todo 김용찬 idx가 아닌 result로 구별하자
-    if (response[keyTourCourse][keyIdx] != null) {
-      //내 장바구니가 있음
-      ModelTourCourse modelTourCourseMy = ModelTourCourse.fromJson(response[keyTourCourse]);
-      return modelTourCourseMy;
-    } else {
-      //내 장바구니가 없음
-      return null;
-    }
-  } catch (e) {
-    //오류 발생
-    MyApp.logger.wtf("장바구니 조회 실패 : ${e.toString()}");
-    return null;
-  }
-}
 
 ///장바구니에 아이템 추가
 Future addTourItemToTourCourseWithServer(ModelTourItem modelTourItem, int day, int level) async {

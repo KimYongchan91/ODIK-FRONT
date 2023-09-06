@@ -28,29 +28,16 @@ class ProviderTourCourseCart extends ChangeNotifier {
     _init();
   }
 
-
-
-  _init(){
+  _init() {
 //기본적으로 2개 생성해둠
     for (int i = 0; i < maxCountTourCourseDay; i++) {
       _listModelTourItem.add([]);
     }
   }
 
-
-
-  getAllTourItemInCart() async {
-    //먼저 내 장바구니가 있는지 조회
-    ModelTourCourse? modelTourCourseMy = await getTourCourseCartMy();
-    if (modelTourCourseMy != null) {
-      _modelTourCourseMy = modelTourCourseMy;
-      //장바구니가 있음
-      //장바구니에 추가
-    } else {
-      //장바구니가 없음
-    }
-
+  getCart() async {
     //장바구니 불러오기
+    MyApp.logger.d("장바구니 불러오기 실행");
     String url = "$urlBaseTest/user/course";
     Map data = {};
 
@@ -60,7 +47,9 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
       // 성공
       if (response[keyResult] == keyOk) {
-        changeTourCourseTitle(response[keyTourCourse][keyTitle], isNotify: false);
+        _modelTourCourseMy = ModelTourCourse.fromJson(response[keyTourCourse]);
+
+        changeTourCourseTitle(_modelTourCourseMy!.title, isNotify: false);
 
         for (var element in ((response[keyTourCourse][keyTourItems] ?? []) as List)) {
           //수정 전
@@ -106,23 +95,37 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
     if (modelTourItem != null && isExistAlready == false) {
       //마지막날에 추가
-      _listModelTourItem[_listModelTourItem.length - 1].add(modelTourItem);
+      int day = 0;
+
+      loop1:
+      for (int i = 0; i < _listModelTourItem.length; i++) {
+        bool isEmptyButThis = true;
+
+        loop2:
+        for (int j = i + 1; j < _listModelTourItem.length; j++) {
+          if (_listModelTourItem[j].isNotEmpty) {
+            isEmptyButThis = false;
+            break loop2;
+          }
+        }
+        if (isEmptyButThis) {
+          day = i;
+          break loop1;
+        }
+      }
+
+      _listModelTourItem[day].add(modelTourItem);
       //새로고침
       notifyListeners();
 
       //내 장바구니에 추가
-      //추가하고 나서 서버에 보내는 거니 _listModelTourItem.last.length -1
-      //todo 김용찬 이 부분 제거해야됨
-      /*addTourItemToTourCourseWithServer(
-          modelTourItem, _listModelTourItem.length - 1, _listModelTourItem.last.length - 1);*/
-
-      //todo 김용찬 아래로 대체
-      _changeTourCourseWithServer();
+      changeTourCourseWithServer();
     }
   }
 
   _addModelTourItem(ModelTourItem modelTourItem, int day, int level, {bool isNotify = true}) {
-    MyApp.logger.d("_addModelTourItem _listModelTourItem.length : ${_listModelTourItem.length}, day : ${day}, level : ${level}");
+    MyApp.logger.d(
+        "_addModelTourItem _listModelTourItem.length : ${_listModelTourItem.length}, day : ${day}, level : ${level}");
     _listModelTourItem[day].add(modelTourItem);
 
     if (isNotify) {
@@ -143,7 +146,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
     _listModelTourItem[newListIndex].insert(newItemIndex, itemOld);
     notifyListeners();
 
-    _changeTourCourseWithServer();
+    changeTourCourseWithServer();
   }
 
   //리스트 전체 순서 재배열
@@ -157,7 +160,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
     _listModelTourItem.insert(newListIndex, listOld);
     notifyListeners();
 
-    _changeTourCourseWithServer();
+    changeTourCourseWithServer();
   }
 
   deleteModelTourItem(ModelTourItem modelTourItem) {
@@ -167,10 +170,10 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
     notifyListeners();
 
-    _changeTourCourseWithServer();
+    changeTourCourseWithServer();
   }
 
-  _changeTourCourseWithServer() async {
+  changeTourCourseWithServer({TourCourseStateType? tourCourseStateType}) async {
     if (_modelTourCourseMy == null) {
       MyApp.logger.wtf("modelTourCourseMy ==null");
       return;
@@ -192,6 +195,13 @@ class ProviderTourCourseCart extends ChangeNotifier {
       keyTourItems: listTourItems,
       keyTitle: _modelTourCourseMy!.title,
     };
+    if (tourCourseStateType == null) {
+      //기존 state 재활용
+      mapBody[keyState] =
+          _modelTourCourseMy!.tourCourseStateType.toString().replaceAll("TourCourseStateType.", "");
+    } else {
+      mapBody[keyState] = tourCourseStateType.toString().replaceAll("TourCourseStateType.", "");
+    }
 
     MyApp.logger.d("최종 modelTourCourseMy : ${mapBody.toString()}");
 
@@ -395,6 +405,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
   }
 
   clearProvider() {
+    _modelTourCourseMy = null;
     _listModelTourItem.clear();
     _init();
     notifyListeners();

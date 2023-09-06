@@ -2,11 +2,13 @@ import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:odik/const/model/place/model_direction.dart';
+import 'package:odik/const/value/tour_course.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/provider/provider_tour_course_cart.dart';
 import 'package:odik/ui/item/item_direction.dart';
 import 'package:odik/ui/item/item_tour_item_cart_modify.dart';
 import 'package:odik/ui/route/route_cart_modify.dart';
+import 'package:odik/ui/widget/button_standard.dart';
 import 'package:provider/provider.dart';
 
 import '../../my_app.dart';
@@ -41,6 +43,7 @@ class _RouteCartState extends State<RouteCart> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                ///상단 장바구니, 편집 버튼
                 Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) => Row(
                     children: [
@@ -67,6 +70,8 @@ class _RouteCartState extends State<RouteCart> {
                     ],
                   ),
                 ),
+
+                ///일정 상세 영역
                 Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) {
                     return ListView.builder(
@@ -75,14 +80,14 @@ class _RouteCartState extends State<RouteCart> {
                         //뒤에 필요 없는 일차는 제거
                         bool isDummy = true;
 
-                        for(int i = index ; i <provider.listModelTourItem.length ; i++){
-                          if(provider.listModelTourItem[i].isNotEmpty){
+                        for (int i = index; i < provider.listModelTourItem.length; i++) {
+                          if (provider.listModelTourItem[i].isNotEmpty) {
                             isDummy = false;
                             break;
                           }
                         }
 
-                        if(isDummy){
+                        if (isDummy) {
                           return Container();
                         }
 
@@ -91,7 +96,7 @@ class _RouteCartState extends State<RouteCart> {
                           children: [
                             Padding(
                               padding:
-                              EdgeInsets.only(top: index == 0 ? 10 : 30, left: 10, right: 10, bottom: 10),
+                                  EdgeInsets.only(top: index == 0 ? 10 : 30, left: 10, right: 10, bottom: 10),
                               child: Row(
                                 children: [
                                   Text(
@@ -107,14 +112,14 @@ class _RouteCartState extends State<RouteCart> {
                                 provider.listModelTourItem[index][index2],
                               ),
                               separatorBuilder: (context, index2) =>
-                              index2 != provider.listModelTourItem[index].length - 1
-                                  ? ItemDirection(
-                                modelTourItemOrigin: provider.listModelTourItem[index][index2],
-                                modelTourItemOriginDestination: provider.listModelTourItem[index]
-                                [index2 + 1],
-                                directionType: DirectionType.car,
-                              )
-                                  : Container(),
+                                  index2 != provider.listModelTourItem[index].length - 1
+                                      ? ItemDirection(
+                                          modelTourItemOrigin: provider.listModelTourItem[index][index2],
+                                          modelTourItemOriginDestination: provider.listModelTourItem[index]
+                                              [index2 + 1],
+                                          directionType: DirectionType.car,
+                                        )
+                                      : Container(),
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                             )
@@ -125,6 +130,18 @@ class _RouteCartState extends State<RouteCart> {
                       physics: const NeverScrollableScrollPhysics(),
                     );
                   },
+                ),
+
+                SizedBox(
+                  height: 40,
+                ),
+
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: ButtonStandard(
+                    onTap: changeTourCourseState,
+                    label: '공개하기',
+                  ),
                 )
               ],
             ),
@@ -132,5 +149,9 @@ class _RouteCartState extends State<RouteCart> {
         ),
       ),
     );
+  }
+
+  changeTourCourseState() async {
+    MyApp.providerCourseCartMy.changeTourCourseWithServer(tourCourseStateType: TourCourseStateType.public);
   }
 }
