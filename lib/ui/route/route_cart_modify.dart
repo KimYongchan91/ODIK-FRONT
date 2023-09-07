@@ -82,8 +82,8 @@ class _RouteCartState extends State<RouteCartModify> {
                 Expanded(
                   child: Consumer<ProviderTourCourseCart>(
                     builder: (context, provider, child) {
-                      List<List<ModelTourItem>> listListModelTourItem = [...provider.listModelTourItem];
-                      for (int i = 0; i < maxCountTourCourseDay - listListModelTourItem.length; i++) {
+                      List<List<ModelTourItem>> listListModelTourItem = [...provider.modelTourCourseMy!.listModelTourItem];
+                      for (int i = 0; i < countTourCourseDayMax - listListModelTourItem.length; i++) {
                         listListModelTourItem.add([]);
                       }
 

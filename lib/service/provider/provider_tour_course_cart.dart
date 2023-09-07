@@ -21,19 +21,7 @@ import '../util/util_tour_item.dart';
 
 class ProviderTourCourseCart extends ChangeNotifier {
   ModelTourCourse? _modelTourCourseMy;
-  final List<List<ModelTourItem>> _listModelTourItem = [];
-  final List<ModelDirection> _listModelDirection = []; //길찾기 memory용
 
-  ProviderTourCourseCart() {
-    _init();
-  }
-
-  _init() {
-//기본적으로 2개 생성해둠
-    for (int i = 0; i < maxCountTourCourseDay; i++) {
-      _listModelTourItem.add([]);
-    }
-  }
 
   getCart() async {
     //장바구니 불러오기
@@ -51,13 +39,6 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
         changeTourCourseTitle(_modelTourCourseMy!.title, isNotify: false);
 
-        for (var element in ((response[keyTourCourse][keyTourItems] ?? []) as List)) {
-          //수정 전
-          //for (var element in ((response["tour_course_item_lists"] ?? []) as List)) {
-          ModelTourItem modelTourItem = ModelTourItem.fromJson(element[keyTourItem]);
-          //MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
-          _addModelTourItem(modelTourItem, element[keyDay], element[keyLevel], isNotify: false);
-        }
 
         notifyListeners();
 
@@ -83,10 +64,13 @@ class ProviderTourCourseCart extends ChangeNotifier {
       return;
     }
 
+    assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
+
+
     ModelTourItem? modelTourItem = await getTourItemFromPlace(modelPlace);
 
     bool isExistAlready = false;
-    for (var element in _listModelTourItem) {
+    for (var element in _modelTourCourseMy!.listModelTourItem) {
       if (element.contains(modelTourItem)) {
         isExistAlready = true;
         break;
@@ -98,12 +82,12 @@ class ProviderTourCourseCart extends ChangeNotifier {
       int day = 0;
 
       loop1:
-      for (int i = 0; i < _listModelTourItem.length; i++) {
+      for (int i = 0; i < _modelTourCourseMy!.listModelTourItem.length; i++) {
         bool isEmptyButThis = true;
 
         loop2:
-        for (int j = i + 1; j < _listModelTourItem.length; j++) {
-          if (_listModelTourItem[j].isNotEmpty) {
+        for (int j = i + 1; j < _modelTourCourseMy!.listModelTourItem.length; j++) {
+          if (_modelTourCourseMy!.listModelTourItem[j].isNotEmpty) {
             isEmptyButThis = false;
             break loop2;
           }
@@ -114,7 +98,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
         }
       }
 
-      _listModelTourItem[day].add(modelTourItem);
+      _modelTourCourseMy!.listModelTourItem[day].add(modelTourItem);
       //새로고침
       notifyListeners();
 
@@ -125,8 +109,8 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
   _addModelTourItem(ModelTourItem modelTourItem, int day, int level, {bool isNotify = true}) {
     MyApp.logger.d(
-        "_addModelTourItem _listModelTourItem.length : ${_listModelTourItem.length}, day : ${day}, level : ${level}");
-    _listModelTourItem[day].add(modelTourItem);
+        "_addModelTourItem _listModelTourItem.length : ${_modelTourCourseMy!.listModelTourItem.length}, day : ${day}, level : ${level}");
+    _modelTourCourseMy!.listModelTourItem[day].add(modelTourItem);
 
     if (isNotify) {
       notifyListeners();
@@ -141,9 +125,11 @@ class ProviderTourCourseCart extends ChangeNotifier {
     //    "newItemIndex : $newItemIndex\n"
     //    "newListIndex : $newListIndex\n");
 
-    var itemOld = _listModelTourItem[oldListIndex][oldItemIndex];
-    _listModelTourItem[oldListIndex].removeAt(oldItemIndex);
-    _listModelTourItem[newListIndex].insert(newItemIndex, itemOld);
+    assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
+
+    var itemOld = _modelTourCourseMy!.listModelTourItem[oldListIndex][oldItemIndex];
+    _modelTourCourseMy!.listModelTourItem[oldListIndex].removeAt(oldItemIndex);
+    _modelTourCourseMy!.listModelTourItem[newListIndex].insert(newItemIndex, itemOld);
     notifyListeners();
 
     changeTourCourseWithServer();
@@ -155,16 +141,20 @@ class ProviderTourCourseCart extends ChangeNotifier {
     //    "oldItemIndex : $oldListIndex\n"
     //    "newListIndex : $newListIndex\n");
 
-    var listOld = _listModelTourItem[oldListIndex];
-    _listModelTourItem.removeAt(oldListIndex);
-    _listModelTourItem.insert(newListIndex, listOld);
+    assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
+
+    var listOld = _modelTourCourseMy!.listModelTourItem[oldListIndex];
+    _modelTourCourseMy!.listModelTourItem.removeAt(oldListIndex);
+    _modelTourCourseMy!.listModelTourItem.insert(newListIndex, listOld);
     notifyListeners();
 
     changeTourCourseWithServer();
   }
 
   deleteModelTourItem(ModelTourItem modelTourItem) {
-    for (var element in _listModelTourItem) {
+    assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
+
+    for (var element in _modelTourCourseMy!.listModelTourItem) {
       element.remove(modelTourItem);
     }
 
@@ -174,16 +164,14 @@ class ProviderTourCourseCart extends ChangeNotifier {
   }
 
   changeTourCourseWithServer({TourCourseStateType? tourCourseStateType}) async {
-    if (_modelTourCourseMy == null) {
-      MyApp.logger.wtf("modelTourCourseMy ==null");
-      return;
-    }
+    assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
+
 
     List<Map<String, dynamic>> listTourItems = [];
-    for (int i = 0; i < _listModelTourItem.length; i++) {
-      for (int j = 0; j < _listModelTourItem[i].length; j++) {
+    for (int i = 0; i < _modelTourCourseMy!.listModelTourItem.length; i++) {
+      for (int j = 0; j < _modelTourCourseMy!.listModelTourItem[i].length; j++) {
         listTourItems.add({
-          keyIdx: _listModelTourItem[i][j].idx,
+          keyIdx: _modelTourCourseMy!.listModelTourItem[i][j].idx,
           keyDay: i,
           keyLevel: j,
         });
@@ -224,196 +212,10 @@ class ProviderTourCourseCart extends ChangeNotifier {
     }
   }
 
-  ///가는 경로 반환
-  Future<ModelDirection?> getModelDirection(ModelTourItem modelTourItemOrigin,
-      ModelTourItem modelTourItemDestination, DirectionType directionType) async {
-    //기존에 있으면 반환
-
-    for (var element in _listModelDirection) {
-      if (element.modelTourItemOrigin == modelTourItemOrigin &&
-          element.modelTourItemDestination == modelTourItemDestination &&
-          element.directionType == directionType) {
-        MyApp.logger.d("기존 direction 재활용");
-        return element;
-      }
-    }
-
-    /* String url =
-        "https://apis-navi.kakaomobility.com/v1/directions?"
-        "origin=127.11015314141542,37.39472714688412&"
-        "destination=127.10824367964793,37.401937080111644&"
-        "waypoints=&"
-        "priority=RECOMMEND&"
-        "car_fuel=GASOLINE&"
-        "car_hipass=false&"
-        "alternatives=false&"
-        "road_details=false";
-*/
-
-    switch (directionType) {
-      case DirectionType.car:
-        String url = "https://apis-navi.kakaomobility.com/v1/directions?"
-            "origin=${modelTourItemOrigin.locationLng},${modelTourItemOrigin.locationLat}&"
-            "destination=${modelTourItemDestination.locationLng},${modelTourItemDestination.locationLat}&";
-
-        Map<String, String> header = {"Authorization": "KakaoAK ea3f77c6f8358b06fe4ad946662253dc"};
-
-        try {
-          final response =
-              await requestHttpStandard(url, {}, methodType: MethodType.get, headerCustom: header);
-          MyApp.logger.d("response 결과 : ${response.toString()}");
-
-          dynamic routes = response['routes'];
-          if (routes is List && routes.isNotEmpty) {
-            dynamic route = routes.first;
-            if (route['result_msg'] == "길찾기 성공") {
-              ModelDirection modelDirection = ModelDirection(
-                modelTourItemOrigin: modelTourItemOrigin,
-                modelTourItemDestination: modelTourItemDestination,
-                directionType: directionType,
-                distance: route['summary']?['distance'] ?? 0,
-                duration: route['summary']?['duration'] ?? 0,
-                fareTaxi: route['summary']?['fare']?['taxi'] ?? 0,
-                fareToll: route['summary']?['fare']?['toll'] ?? 0,
-              );
-
-              //저장후 리턴
-              _listModelDirection.add(modelDirection);
-              return modelDirection;
-            }
-          }
-        } catch (e) {
-          MyApp.logger.wtf("direction 에러 : ${e.toString()}");
-        }
-
-      case DirectionType.transit:
-        String url = "https://apis.openapi.sk.com/transit/routes";
-
-        try {
-          Map<String, String> header = {
-            "accept": "application/json",
-            "content-type": "application/json",
-            "appKey": "e8wHh2tya84M88aReEpXCa5XTQf3xgo01aZG39k5",
-          };
-
-          Map<String, dynamic> body = {
-            "startX": "${modelTourItemOrigin.locationLng}",
-            "startY": "${modelTourItemOrigin.locationLat}",
-            "endX": "${modelTourItemDestination.locationLng}",
-            "endY": "${modelTourItemDestination.locationLat}",
-            "lang": 0,
-            "format": "json",
-            "reqDttm": DateFormat('yyyyMMddHHmmss').format(DateTime.now())
-          };
-
-          final response = await requestHttpStandard(
-            url,
-            body,
-            methodType: MethodType.post,
-            headerCustom: header,
-            isIncludeModeHeaderCustom: false,
-            isNeedDecodeUnicode: false,
-          );
-
-          List<ModelDirectionTransitPlan> listModelDirectionTransitPlan = [];
-          List listItineraries = ((response['metaData']?['plan']?['itineraries'] ?? []) as List);
-
-          for (var element in listItineraries) {
-            ModelDirectionTransitPlan modelDirectionTransitPlan = ModelDirectionTransitPlan(
-              pathType: element['pathType'] ?? 0,
-              countTransfer: element['transferCount'] ?? 0,
-              distanceTotal: element['totalDistance'] ?? 0,
-              distanceWalk: element['totalWalkDistance'] ?? 0,
-              durationTotal: element['totalTime'] ?? 0,
-              durationWalk: element['totalWalkTime'] ?? 0,
-              fareTotal: element['fare']['regular']['totalFare'],
-            );
-
-            listModelDirectionTransitPlan.add(modelDirectionTransitPlan);
-          }
-
-          if (listModelDirectionTransitPlan.isNotEmpty) {
-            ModelDirection modelDirection = ModelDirection(
-              modelTourItemOrigin: modelTourItemOrigin,
-              modelTourItemDestination: modelTourItemDestination,
-              directionType: directionType,
-              distance: listModelDirectionTransitPlan.first.distanceTotal,
-              duration: listModelDirectionTransitPlan.first.durationTotal,
-              listTransitPlan: listModelDirectionTransitPlan,
-            );
-
-            return modelDirection;
-          } else {
-            return null;
-          }
-        } catch (e) {
-          MyApp.logger.wtf("direction 에러 : ${e.toString()}");
-          return null;
-        }
-      case DirectionType.walk:
-        try {
-          String url = "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1";
-
-          Map<String, String> header = {
-            "accept": "application/json",
-            "content-type": "application/json",
-            "appKey": "e8wHh2tya84M88aReEpXCa5XTQf3xgo01aZG39k5",
-          };
-
-          Map<String, dynamic> body = {
-            "startX": "${modelTourItemOrigin.locationLng}",
-            "startY": "${modelTourItemOrigin.locationLat}",
-            "endX": "${modelTourItemDestination.locationLng}",
-            "endY": "${modelTourItemDestination.locationLat}",
-            "startName": modelTourItemOrigin.title,
-            "endName": modelTourItemDestination.title,
-          };
-
-          final response = await requestHttpStandard(
-            url,
-            body,
-            methodType: MethodType.post,
-            headerCustom: header,
-            isIncludeModeHeaderCustom: false,
-            isNeedDecodeUnicode: false,
-          );
-
-          MyApp.logger.d("response 결과 : ${response.toString()}");
-
-          List listItineraries = ((response['features'] ?? []) as List);
-          MyApp.logger.d("listItineraries.first : ${listItineraries.first.toString()}");
-          dynamic properties = listItineraries.first['properties'];
-          if (properties != null && properties['totalDistance'] != null && properties['totalTime'] != null) {
-            ModelDirection modelDirection = ModelDirection(
-              modelTourItemOrigin: modelTourItemOrigin,
-              modelTourItemDestination: modelTourItemDestination,
-              directionType: directionType,
-              distance: properties['totalDistance'],
-              duration: properties['totalTime'],
-            );
-            return modelDirection;
-          } else {
-            return null;
-          }
-        } catch (e) {
-          MyApp.logger.wtf("direction 에러 : ${e.toString()}");
-          return null;
-        }
-    }
-
-    return null;
-  }
-
   clearProvider() {
     _modelTourCourseMy = null;
-    _listModelTourItem.clear();
-    _init();
     notifyListeners();
   }
 
   ModelTourCourse? get modelTourCourseMy => _modelTourCourseMy;
-
-  List<List<ModelTourItem>> get listModelTourItem => _listModelTourItem;
-
-  List<ModelDirection> get listModelDirection => _listModelDirection;
 }

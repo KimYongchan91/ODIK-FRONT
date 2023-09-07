@@ -19,12 +19,26 @@ TourCourseStateType getTourCourseStateType(String? state) {
   }
 }
 
+List<List<ModelTourItem>> getListListModelTourItemFromDynamicData(dynamic tourItems) {
+  List<List<ModelTourItem>> result = List.generate(countTourCourseDayMax, (index) => []);
 
+  //MyApp.logger.d("tourItems.type : ${tourItems.runtimeType.toString()}");
+
+  if (tourItems is List) {
+    for (var element in tourItems) {
+      ModelTourItem modelTourItem = ModelTourItem.fromJson(element[keyTourItem]);
+      //MyApp.logger.d("modelTourItem : ${modelTourItem.toString()}");
+      int day = element[keyDay];
+      int level = element[keyLevel];
+      result[day].insert(level, modelTourItem);
+    }
+  }
+  return result;
+}
 
 ///장바구니에 아이템 추가
 Future addTourItemToTourCourseWithServer(ModelTourItem modelTourItem, int day, int level) async {
-
-  if(MyApp.providerCourseCartMy.modelTourCourseMy == null){
+  if (MyApp.providerCourseCartMy.modelTourCourseMy == null) {
     MyApp.logger.wtf("MyApp.providerCourseCart.modelTourCourseMy == null");
     return;
   }

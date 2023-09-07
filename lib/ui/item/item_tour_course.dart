@@ -8,14 +8,18 @@ class ItemTourCourse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
-      child: Container(
-        height: 120,
-        child: Column(
-          children: [
-            Text('${modelTourCourse.title}')
-          ],
+    return InkWell(
+      onTap: () {
+
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+          height: 120,
+          child: Column(
+            children: [Text('${modelTourCourse.title}')],
+          ),
         ),
       ),
     );

@@ -77,13 +77,13 @@ class _RouteCartState extends State<RouteCart> {
                 Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) {
                     return ListView.builder(
-                      itemCount: provider.listModelTourItem.length,
+                      itemCount: provider.modelTourCourseMy!.listModelTourItem.length,
                       itemBuilder: (context, index) {
                         //뒤에 필요 없는 일차는 제거
                         bool isDummy = true;
 
-                        for (int i = index; i < provider.listModelTourItem.length; i++) {
-                          if (provider.listModelTourItem[i].isNotEmpty) {
+                        for (int i = index; i < provider.modelTourCourseMy!.listModelTourItem.length; i++) {
+                          if (provider.modelTourCourseMy!.listModelTourItem[i].isNotEmpty) {
                             isDummy = false;
                             break;
                           }
@@ -109,15 +109,15 @@ class _RouteCartState extends State<RouteCart> {
                               ),
                             ),
                             ListView.separated(
-                              itemCount: provider.listModelTourItem[index].length,
+                              itemCount: provider.modelTourCourseMy!.listModelTourItem[index].length,
                               itemBuilder: (context, index2) => ItemTourItemForCart(
-                                provider.listModelTourItem[index][index2],
+                                provider.modelTourCourseMy!.listModelTourItem[index][index2],
                               ),
                               separatorBuilder: (context, index2) =>
-                                  index2 != provider.listModelTourItem[index].length - 1
+                                  index2 != provider.modelTourCourseMy!.listModelTourItem[index].length - 1
                                       ? ItemDirection(
-                                          modelTourItemOrigin: provider.listModelTourItem[index][index2],
-                                          modelTourItemOriginDestination: provider.listModelTourItem[index]
+                                          modelTourItemOrigin: provider.modelTourCourseMy!.listModelTourItem[index][index2],
+                                          modelTourItemOriginDestination: provider.modelTourCourseMy!.listModelTourItem[index]
                                               [index2 + 1],
                                           directionType: DirectionType.car,
                                         )
@@ -154,7 +154,7 @@ class _RouteCartState extends State<RouteCart> {
   }
 
   changeTourCourseState() async {
-    if (MyApp.providerCourseCartMy.listModelTourItem.isEmpty) {
+    if (MyApp.providerCourseCartMy.modelTourCourseMy!.listModelTourItem.isEmpty) {
       showSnackBarOnRoute('코스가 비었어요.');
       return;
     }

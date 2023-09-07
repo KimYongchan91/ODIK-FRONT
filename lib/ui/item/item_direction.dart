@@ -8,6 +8,7 @@ import 'package:expandable/expandable.dart';
 import 'package:odik/custom/custom_text_style.dart';
 
 import '../../my_app.dart';
+import '../../service/util/util_direction.dart';
 
 class ItemDirection extends StatefulWidget {
   final ModelTourItem modelTourItemOrigin;
@@ -35,7 +36,7 @@ class _ItemDirectionState extends State<ItemDirection> {
 
     valueNotifierDirectionType = ValueNotifier(widget.directionType);
 
-    futureGetDirection = MyApp.providerCourseCartMy.getModelDirection(
+    futureGetDirection = getModelDirection(
       widget.modelTourItemOrigin,
       widget.modelTourItemOriginDestination,
       valueNotifierDirectionType.value,
@@ -122,7 +123,7 @@ class _ItemDirectionState extends State<ItemDirection> {
                                 valueNotifierDirectionType.value = e;
 
                                 setState(() {
-                                  futureGetDirection = MyApp.providerCourseCartMy.getModelDirection(
+                                  futureGetDirection = getModelDirection(
                                     widget.modelTourItemOrigin,
                                     widget.modelTourItemOriginDestination,
                                     valueNotifierDirectionType.value,

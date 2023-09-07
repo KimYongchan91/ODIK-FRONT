@@ -20,7 +20,7 @@ class ItemTourItemForCart extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(()=>RouteTourItemDetail(modelTourItem));
+        Get.to(() => RouteTourItemDetail(modelTourItem));
       },
       child: Card(
         elevation: 3,
@@ -36,7 +36,7 @@ class ItemTourItemForCart extends StatelessWidget {
                 Row(
                   children: [
                     CachedNetworkImage(
-                      imageUrl: modelTourItem.listUrlImage.first,
+                      imageUrl: modelTourItem.listUrlImage.isNotEmpty ? modelTourItem.listUrlImage.first : '',
                       width: _sizeImagePlace,
                       height: _sizeImagePlace,
                       fit: BoxFit.cover,

@@ -1,12 +1,5 @@
-/*
-List<T> getListFromDynamic<T>(dynamic data) {
-  if(data == null){
-    return [];
-  }
-
-  if(data is List){
-
-  }
-
+bool isSameList<K, V>(List<K> listA, List<V> listB) {
+  return K.runtimeType == V.runtimeType &&
+      listA.length == listB.length &&
+      listA.every((element) => listB.contains(element));
 }
-*/
