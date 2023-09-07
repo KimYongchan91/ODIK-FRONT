@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:odik/const/model/model_tour_course.dart';
 import 'package:odik/custom/custom_text_style.dart';
+import 'package:odik/ui/route/route_list_tour_course.dart';
 import 'package:odik/ui/screen/screen_main_map.dart';
+import 'package:provider/provider.dart';
 
+import '../../const/model/place/model_direction.dart';
 import '../../const/value/key.dart';
 import '../../const/value/test.dart';
 import '../../my_app.dart';
+import '../../service/provider/provider_tour_course_cart.dart';
 import '../../service/util/util_http.dart';
 import '../../service/util/util_like.dart';
+import '../item/item_direction.dart';
+import '../item/item_tour_item_cart.dart';
 
 class RouteTourCourseDetail extends StatefulWidget {
   final ModelTourCourse modelTourCourse;
@@ -35,25 +42,47 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Text(
-              '${widget.modelTourCourse.title}',
-              style: CustomTextStyle.largeBlackBold(),
-            ),
-            ValueListenableBuilder(
-              valueListenable: valueNotifierIsLike,
-              builder: (context, value, child) => InkWell(
-                onTap: _changeIsLike,
-                child: Icon(
-                  value ? Icons.favorite : Icons.favorite_border,
-                  size: 36,
-                  color: colorPrimary,
+      body: MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: MyApp.providerCourseCartMy,
+          )
+        ],
+        builder:  (context, child) => SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${widget.modelTourCourse.title}',
+                style: CustomTextStyle.largeBlackBold(),
+              ),
+              InkWell(
+                onTap: () {
+                  Get.to(() => RouteListTourCourse(widget.modelTourCourse.modelUserCore));
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Text(
+                    '${widget.modelTourCourse.modelUserCore.nickName}',
+                    style: CustomTextStyle.bigBlackBold().copyWith(color: Colors.blueAccent),
+                  ),
                 ),
               ),
-            ),
-          ],
+              ValueListenableBuilder(
+                valueListenable: valueNotifierIsLike,
+                builder: (context, value, child) => InkWell(
+                  onTap: _changeIsLike,
+                  child: Icon(
+                    value ? Icons.favorite : Icons.favorite_border,
+                    size: 36,
+                    color: colorPrimary,
+                  ),
+                ),
+              ),
+
+
+            ],
+          ),
         ),
       ),
     );
@@ -62,7 +91,7 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
   //좋아요 수정
   _changeIsLike() async {
     try {
-      await changeIsLikeTour(!valueNotifierIsLike.value,modelTourCourse: widget.modelTourCourse);
+      await changeIsLikeTour(!valueNotifierIsLike.value, modelTourCourse: widget.modelTourCourse);
       valueNotifierIsLike.value = !valueNotifierIsLike.value;
     } catch (e) {
       //

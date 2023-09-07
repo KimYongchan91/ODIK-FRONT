@@ -51,60 +51,65 @@ class _RouteMainState extends State<RouteMain> {
         createAddToCartAnimation: (runAddToCartAnimation) {
           MyApp.runAddToCartAnimation = runAddToCartAnimation;
         },
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          body: SafeArea(
-            child: ValueListenableBuilder(
-              valueListenable: valueNotifierIndexPage,
-              builder: (context, value, child) => IndexedStack(
-                index: value,
-                children: const [
-                  ScreenMainHome(),
-                  ScreenMainMap(),
-                  ScreenMainProfile(),
-                ],
+        child: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: SafeArea(
+              child: ValueListenableBuilder(
+                valueListenable: valueNotifierIndexPage,
+                builder: (context, value, child) => IndexedStack(
+                  index: value,
+                  children: const [
+                    ScreenMainHome(),
+                    ScreenMainMap(),
+                    ScreenMainProfile(),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          ///플로팅 액션 버튼
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.orange,
-            onPressed: () async {
-              Get.toNamed(keyRouteCart);
-            },
-            child: AddToCartIcon(
-              key: MyApp.keyCart,
-              icon: const Icon(Icons.card_travel),
-              badgeOptions: const BadgeOptions(
-                active: false,
-              ),
-            ),
-          ),
-
-          ///플로팅 액션 버튼 위치
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-
-          ///바텀 네비게이션 바
-          bottomNavigationBar: ValueListenableBuilder(
-            valueListenable: valueNotifierIndexPage,
-            builder: (context, value, child) => AnimatedBottomNavigationBar.builder(
-              itemCount: listIconNavigationBar.length,
-              tabBuilder: (index, isActive) => Icon(
-                listIconNavigationBar[index],
-                color: isActive ? Colors.orange : Colors.grey,
-                size: isActive ? 28 : 24,
-              ),
-              height: 60,
-              //기본값 56
-              activeIndex: value,
-              gapLocation: GapLocation.end,
-              notchSmoothness: NotchSmoothness.defaultEdge,
-              onTap: (index) {
-                valueNotifierIndexPage.value = index;
+            ///플로팅 액션 버튼
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.orange,
+              onPressed: () async {
+                Get.toNamed(keyRouteCart);
               },
+              child: AddToCartIcon(
+                key: MyApp.keyCart,
+                icon: const Icon(Icons.card_travel),
+                badgeOptions: const BadgeOptions(
+                  active: false,
+                ),
+              ),
             ),
-            //other params
+
+            ///플로팅 액션 버튼 위치
+            floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+
+            ///바텀 네비게이션 바
+            bottomNavigationBar: ValueListenableBuilder(
+              valueListenable: valueNotifierIndexPage,
+              builder: (context, value, child) => AnimatedBottomNavigationBar.builder(
+                itemCount: listIconNavigationBar.length,
+                tabBuilder: (index, isActive) => Icon(
+                  listIconNavigationBar[index],
+                  color: isActive ? Colors.orange : Colors.grey,
+                  size: isActive ? 28 : 24,
+                ),
+                height: 60,
+                //기본값 56
+                activeIndex: value,
+                gapLocation: GapLocation.end,
+                notchSmoothness: NotchSmoothness.defaultEdge,
+                onTap: (index) {
+                  valueNotifierIndexPage.value = index;
+                },
+              ),
+              //other params
+            ),
           ),
         ),
       ),
