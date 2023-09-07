@@ -13,7 +13,9 @@ class ItemTourCourse extends StatelessWidget {
       child: Container(
         height: 120,
         child: Column(
-          children: [],
+          children: [
+            Text('${modelTourCourse.title}')
+          ],
         ),
       ),
     );

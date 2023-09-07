@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:odik/const/value/router.dart';
 import 'package:odik/service/provider/provider_user.dart';
+import 'package:odik/service/util/util_snackbar.dart';
+import 'package:odik/ui/route/route_list_tour_course.dart';
 import 'package:odik/ui/route/route_profile_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
@@ -39,13 +41,13 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                   builder: (context, value, child) => value.modelUser != null
                       ? InkWell(
                           onTap: () {
-                            Get.to(() => RouteProfileDetail());
+                            Get.to(() => const RouteProfileDetail());
                           },
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             child: Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.person_2_rounded,
                                   size: 48,
                                 ),
@@ -58,7 +60,7 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                           ),
                         )
                       : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           child: ButtonStandard(
                             onTap: () {
                               Get.toNamed(keyRouteLogin);
@@ -67,10 +69,17 @@ class _ScreenMainState extends State<ScreenMainProfile> {
                           ),
                         ),
                 ),
+                ButtonStandard(
+                  onTap: () {
+                    if (MyApp.providerUser.modelUser == null) {
+                      showSnackBarOnRoute(messageNeedLogin);
+                      return;
+                    }
 
-                /* Consumer<ProviderUser>(
-                  builder: (context, value, child) => ,
-                )*/
+                    Get.to(() => const RouteListTourCourse(null));
+                  },
+                  label: '내가 등록한 코스',
+                ),
               ],
             ),
           ),

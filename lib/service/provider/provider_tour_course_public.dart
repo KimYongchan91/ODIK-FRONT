@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:odik/const/model/model_user_core.dart';
+import 'package:odik/const/value/tour_course.dart';
 
 import '../../const/model/model_tour_course.dart';
 import '../../const/value/key.dart';
@@ -16,6 +17,8 @@ class ProviderTourCoursePublic extends ChangeNotifier {
   }
 
   getAllTourCourse() async {
+    assert(_modelUserCore != null, '_modelUserCore is null, setModelUserCore() first ');
+
     if (_modelUserCore == null) {
       MyApp.logger.wtf('_modelUserCore == null');
       return;
@@ -34,7 +37,10 @@ class ProviderTourCoursePublic extends ChangeNotifier {
       if (response[keyResult] == keyOk) {
         for (var element in ((response[keyTourCourses]?[keyContent] ?? []) as List)) {
           ModelTourCourse modelTourCourse = ModelTourCourse.fromJson(element);
-          _listModelTourCourse.add(modelTourCourse);
+          //장바구니가 아닌 것만 추가
+          if (modelTourCourse.tourCourseStateType != TourCourseStateType.cart) {
+            _listModelTourCourse.add(modelTourCourse);
+          }
         }
 
         //실패
@@ -58,4 +64,6 @@ class ProviderTourCoursePublic extends ChangeNotifier {
     _listModelTourCourse.clear();
     notifyListeners();
   }
+
+  List<ModelTourCourse> get listModelTourCourse => _listModelTourCourse;
 }

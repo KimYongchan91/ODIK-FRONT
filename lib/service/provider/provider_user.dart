@@ -77,6 +77,10 @@ class ProviderUser extends ChangeNotifier {
 
   ///로그인 후 공통 작업
   jobAfterLogin() async {
+    if (modelUser == null) {
+      MyApp.logger.wtf("modelUser==null");
+      return;
+    }
     MyApp.logger.d("jobAfterLogin 동작");
     MyApp.providerCourseCartMy.getCart();
     MyApp.providerCoursePublicMy.setModelUserCore(modelUser!);
