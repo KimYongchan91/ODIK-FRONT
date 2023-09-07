@@ -26,7 +26,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
   getCart() async {
     //장바구니 불러오기
     MyApp.logger.d("장바구니 불러오기 실행");
-    String url = "$urlBaseTest/user/course";
+    String url = "$urlBase/user/course";
     Map data = {};
 
     try {
@@ -194,7 +194,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
     MyApp.logger.d("최종 modelTourCourseMy : ${mapBody.toString()}");
 
     ///user/course
-    String url = "$urlBaseTest/user/course";
+    String url = "$urlBase/user/course";
 
     try {
       Map<String, dynamic> response = await requestHttpStandard(url, mapBody, methodType: MethodType.put);

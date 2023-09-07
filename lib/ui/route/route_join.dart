@@ -294,7 +294,7 @@ class _RouteJoinState extends State<RouteJoin> {
     String body = json.encode(dataRequest);
 
     //데이터를 보낼 url
-    String url = '$urlBaseTest/auth/email_verify/request';
+    String url = '$urlBase/auth/email_verify/request';
 
     try {
       //응답결과 객체
@@ -366,7 +366,7 @@ class _RouteJoinState extends State<RouteJoin> {
     String body = json.encode(dataRequest);
 
     //데이터를 보낼 url
-    String url = '$urlBaseTest/auth/email_verify/verify';
+    String url = '$urlBase/auth/email_verify/verify';
 
     try {
       //응답결과 객체
@@ -458,7 +458,7 @@ class _RouteJoinState extends State<RouteJoin> {
 
     //재 인증 url
     //header 데이터만으로 인증 여부 확인
-    String url = "$urlBaseTest/auth/signup";
+    String url = "$urlBase/auth/signup";
 
     try {
       Map<String, dynamic> response = await requestHttpStandard(url, mapData, methodType: MethodType.post);

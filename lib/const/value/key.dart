@@ -69,3 +69,5 @@ const String keyTourItemIdx = "tour_item_idx";
 
 const String keyDay = "day";
 const String keyLevel = "level";
+
+const String keyLike = 'like';

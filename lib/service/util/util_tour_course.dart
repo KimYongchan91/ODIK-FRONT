@@ -43,7 +43,7 @@ Future addTourItemToTourCourseWithServer(ModelTourItem modelTourItem, int day, i
     return;
   }
 
-  String url = "$urlBaseTest/user/course/add_tour_item";
+  String url = "$urlBase/user/course/add_tour_item";
   Map<String, dynamic> mapData = {
     keyTourCourseIdx: MyApp.providerCourseCartMy.modelTourCourseMy!.idx,
     keyTourItemIdx: modelTourItem.idx,

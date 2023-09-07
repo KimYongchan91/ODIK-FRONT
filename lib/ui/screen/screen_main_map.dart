@@ -399,7 +399,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
     ///odik api 사용 부분
     String keywordFormatted = keyword.trim().replaceAll("  ", " ");
 
-    String urlOdikApi = "$urlBaseTest/tour/course?keyword=$keywordFormatted&order=like"; //todo 김용찬 order 수정
+    String urlOdikApi = "$urlBase/tour/course?keyword=$keywordFormatted&order=like"; //todo 김용찬 order 수정
     String urlOdikApiEncoded = Uri.encodeFull(urlOdikApi);
     MyApp.logger.d("urlOdikApiEncoded : $urlOdikApiEncoded");
     Map data = {};

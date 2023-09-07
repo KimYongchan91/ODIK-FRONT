@@ -23,7 +23,7 @@ class ProviderUser extends ChangeNotifier {
   Future<bool> loginWithEmail(String email, String pss) async {
     //String url = 'https://odik.link/auth/sign';
     //todo test
-    String url = "$urlBaseTest/auth/login";
+    String url = "$urlBase/auth/login";
     Map data = {
       keyId: email,
       keyPassword: pss,
@@ -92,7 +92,7 @@ class ProviderUser extends ChangeNotifier {
   _checkIsValidAccount() async {
     //재 인증 url
     //header 데이터만으로 인증 여부 확인
-    String url = "$urlBaseTest/auth/validate_token";
+    String url = "$urlBase/auth/validate_token";
     Map data = {};
 
     try {

@@ -26,7 +26,7 @@ class ProviderTourCoursePublic extends ChangeNotifier {
 
     //재 인증 url
     //header 데이터만으로 인증 여부 확인
-    String url = "$urlBaseTest/user/course/list";
+    String url = "$urlBase/user/course/list";
     Map data = {};
 
     try {

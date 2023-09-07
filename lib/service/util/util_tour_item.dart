@@ -31,7 +31,7 @@ getTourItemFromReferenceIdGoogle(String referenceId) async {
   //관광지
   //log("카트에 추가되는 정보 : ${modelPlace.toJson()}");
 
-  String url = "$urlBaseTest/tour/item?reference_id=$referenceId";
+  String url = "$urlBase/tour/item?reference_id=$referenceId";
 
   try {
     Map<String, dynamic> response = await requestHttpStandard(url, {}, methodType: MethodType.get);
@@ -55,7 +55,7 @@ getTourItemFromReferenceIdGoogle(String referenceId) async {
 ///관광지 등록
 ///등록 후 데이터까지 반환
 Future<ModelTourItem?> addTourItemToServer(ModelPlace modelPlace) async {
-  String url = "$urlBaseTest/tour/item";
+  String url = "$urlBase/tour/item";
   Map data = modelPlace.toJson();
 
   try {
