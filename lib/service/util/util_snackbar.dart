@@ -35,6 +35,10 @@ String messagePermissionImageDenied = '이미지를 불러올 권한이 없어�
 String messagePermissionImageDeniedPermanently = '권한이 완전히 거부되었어요.\n설정으로 이동해 직접 허용해 주세요.';
 String messageEmptySelectedImage = '선택된 사진이 없어요.';
 
+String messageCompleteAddTourItem = '관광지를 장바구니에 담았어요.';
+String messageAlreadyExistInCart = '이미 장바구니에 존재해요.';
+
+
 void showSnackBarOnRoute(
   String content, {
   String title = '알림',

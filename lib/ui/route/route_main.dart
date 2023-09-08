@@ -57,16 +57,21 @@ class _RouteMainState extends State<RouteMain> {
           },
           child: Scaffold(
             backgroundColor: Colors.white,
-            body: SafeArea(
-              child: ValueListenableBuilder(
-                valueListenable: valueNotifierIndexPage,
-                builder: (context, value, child) => IndexedStack(
-                  index: value,
-                  children: const [
-                    ScreenMainHome(),
-                    ScreenMainMap(),
-                    ScreenMainProfile(),
-                  ],
+            body: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: MyApp.providerCourseCartMy),
+              ],
+              builder: (context, child) => SafeArea(
+                child: ValueListenableBuilder(
+                  valueListenable: valueNotifierIndexPage,
+                  builder: (context, value, child) => IndexedStack(
+                    index: value,
+                    children: const [
+                      ScreenMainHome(),
+                      ScreenMainMap(),
+                      ScreenMainProfile(),
+                    ],
+                  ),
                 ),
               ),
             ),

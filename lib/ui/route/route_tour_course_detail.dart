@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:odik/const/model/model_tour_course.dart';
 import 'package:odik/custom/custom_text_style.dart';
+import 'package:odik/service/util/util_snackbar.dart';
 import 'package:odik/ui/route/route_list_tour_course.dart';
 import 'package:odik/ui/screen/screen_main_map.dart';
 import 'package:odik/ui/widget/listview_tour_item_In_tour_course.dart';
@@ -71,8 +72,11 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
                   ),
                 ),
                 InkWell(
-                  onTap: (){
-                    MyApp.providerCourseCartMy.addListModelTourItem(widget.modelTourCourse.listModelTourItem,isNotify: true);
+                  onTap: () async {
+                    await MyApp.providerCourseCartMy
+                        .addListModelTourItem(widget.modelTourCourse.listModelTourItem, isNotify: true);
+
+                    showSnackBarOnRoute(messageCompleteAddTourItem);
                   },
                   child: Row(
                     children: [
@@ -90,23 +94,32 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
                       Spacer(),
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: colorPrimary,
-                            width: 1.5,
-                          )
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: colorPrimary,
+                              width: 1.5,
+                            )),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.card_travel,color: colorPrimary,),
-                            SizedBox(width: 10,),
-                            Text('모두 담기',style: CustomTextStyle.normalBlackBold().copyWith(color: colorPrimary),),
+                            Icon(
+                              Icons.card_travel,
+                              color: colorPrimary,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              '모두 담기',
+                              style: CustomTextStyle.normalBlackBold().copyWith(color: colorPrimary),
+                            ),
                           ],
                         ),
                       ),
-                      SizedBox(width: 10,),
+                      SizedBox(
+                        width: 10,
+                      ),
                     ],
                   ),
                 ),

@@ -10,6 +10,8 @@ import 'package:odik/service/util/util_tour_course.dart';
 import 'package:odik/ui/item/item_history_search_keyword.dart';
 import 'package:odik/ui/item/item_place.dart';
 import 'package:odik/ui/item/item_tour_course.dart';
+import 'package:odik/ui/widget/badge_cart.dart';
+import 'package:provider/provider.dart';
 
 import '../../const/model/model_history_search_keyword.dart';
 import '../../const/model/model_tour_course.dart';
@@ -63,113 +65,123 @@ class _RouteSearchState extends State<RouteSearch> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: TextField(
-                    controller: textEditingControllerKeyword,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: InkWell(
-                        onTap: () {
-                          _search(textEditingControllerKeyword.text);
-                        },
-                        child: const Icon(Icons.search),
-                      ),
-                      suffixIcon: InkWell(
-                        onTap: () {
-                          _clearKeyword();
-                        },
-                        child: Icon(Icons.close),
-                      ),
-
-                      hintText: '어디로 떠나 볼까요?',
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 5,
-                        horizontal: 10,
-                      ),
-                    ),
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: _search,
-                  ),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: valueNotifierKeyword,
-                  builder: (context, value, child) => value != null
-
-                      ///검색 후
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '코스',
-                              style: CustomTextStyle.bigBlackBold(),
-                            ),
-
-                            ///코스 리스트뷰
-                            ValueListenableBuilder(
-                              valueListenable: valueNotifierListModelTourCourse,
-                              builder: (context, value, child) => ListView.builder(
-                                itemBuilder: (context, index) => ItemTourCourse(value[index]),
-                                itemCount: value.length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
+        body: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: MyApp.providerCourseCartMy),
+          ],
+          builder: (context, child) => SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: textEditingControllerKeyword,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              prefixIcon: InkWell(
+                                onTap: () {
+                                  _search(textEditingControllerKeyword.text);
+                                },
+                                child: const Icon(Icons.search),
+                              ),
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  _clearKeyword();
+                                },
+                                child: Icon(Icons.close),
+                              ),
+                              hintText: '어디로 떠나 볼까요?',
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 5,
+                                horizontal: 10,
                               ),
                             ),
-
-                            const Text(
-                              '관광지',
-                              style: CustomTextStyle.bigBlackBold(),
-                            ),
-
-                            ///코스 리스트뷰
-                            ValueListenableBuilder(
-                              valueListenable: valueNotifierModelPlace,
-                              builder: (context, value, child) => ListView.builder(
-                                itemBuilder: (context, index) => ItemPlace(value[index]),
-                                itemCount: value.length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                              ),
-                            )
-                          ],
-                        )
-
-                      ///검색  전
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '최근 검색어',
-                              style: CustomTextStyle.bigBlackBold(),
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable: valueNotifierListModelHistorySearchKeyword,
-                              builder: (context, value, child) => ListView.builder(
-                                itemCount: value.length,
-                                itemBuilder: (context, index) => ItemHistorySearchKeyword(
-                                  value[index],
-                                  onTapeKeyword: (){
-                                    _search(value[index].keyword,isChangeTextEditingControl: true);
-                                  },
-                                  onTapDeleteKeyword: () {
-                                    _deleteKeyword(value[index].keyword);
-                                  },
-
-                                ),
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                              ),
-                            ),
-                          ],
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: _search,
+                          ),
                         ),
-                ),
-              ],
+                        BadgeCartMy(),
+                      ],
+                    ),
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: valueNotifierKeyword,
+                    builder: (context, value, child) => value != null
+
+                        ///검색 후
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '코스',
+                                style: CustomTextStyle.bigBlackBold(),
+                              ),
+
+                              ///코스 리스트뷰
+                              ValueListenableBuilder(
+                                valueListenable: valueNotifierListModelTourCourse,
+                                builder: (context, value, child) => ListView.builder(
+                                  itemBuilder: (context, index) => ItemTourCourse(value[index]),
+                                  itemCount: value.length,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                ),
+                              ),
+
+                              const Text(
+                                '관광지',
+                                style: CustomTextStyle.bigBlackBold(),
+                              ),
+
+                              ///코스 리스트뷰
+                              ValueListenableBuilder(
+                                valueListenable: valueNotifierModelPlace,
+                                builder: (context, value, child) => ListView.builder(
+                                  itemBuilder: (context, index) => ItemPlace(value[index]),
+                                  itemCount: value.length,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                ),
+                              )
+                            ],
+                          )
+
+                        ///검색  전
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '최근 검색어',
+                                style: CustomTextStyle.bigBlackBold(),
+                              ),
+                              ValueListenableBuilder(
+                                valueListenable: valueNotifierListModelHistorySearchKeyword,
+                                builder: (context, value, child) => ListView.builder(
+                                  itemCount: value.length,
+                                  itemBuilder: (context, index) => ItemHistorySearchKeyword(
+                                    value[index],
+                                    onTapeKeyword: () {
+                                      _search(value[index].keyword, isChangeTextEditingControl: true);
+                                    },
+                                    onTapDeleteKeyword: () {
+                                      _deleteKeyword(value[index].keyword);
+                                    },
+                                  ),
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -177,10 +189,10 @@ class _RouteSearchState extends State<RouteSearch> {
     );
   }
 
-  _clearKeyword(){
+  _clearKeyword() {
     textEditingControllerKeyword.text = '';
-    valueNotifierKeyword.value =null;
-    valueNotifierModelPlace.value=[];
+    valueNotifierKeyword.value = null;
+    valueNotifierModelPlace.value = [];
     valueNotifierListModelTourCourse.value = [];
   }
 
@@ -192,13 +204,13 @@ class _RouteSearchState extends State<RouteSearch> {
     });
   }
 
-  _search(String keyword,{bool isChangeTextEditingControl = false}) {
+  _search(String keyword, {bool isChangeTextEditingControl = false}) {
     if (keyword.isEmpty || keyword.trim().isEmpty) {
       showSnackBarOnRoute('검색어를 입력해 주세요.');
       return;
     }
 
-    if(isChangeTextEditingControl){
+    if (isChangeTextEditingControl) {
       textEditingControllerKeyword.text = keyword;
     }
 
@@ -210,8 +222,6 @@ class _RouteSearchState extends State<RouteSearch> {
   _searchCourseFromOdikApi(String keyword) async {
     FocusManager.instance.primaryFocus?.unfocus();
     valueNotifierKeyword.value = keyword;
-
-
 
     ///odik api 사용 부분
     String keywordFormatted = keyword.trim().replaceAll("  ", " ");

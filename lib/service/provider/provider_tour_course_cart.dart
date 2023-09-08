@@ -19,6 +19,8 @@ import '../util/util_http.dart';
 import '../util/util_tour_course.dart';
 import '../util/util_tour_item.dart';
 
+enum ResultAddTourItemType { ok, already, error, yet }
+
 class ProviderTourCourseCart extends ChangeNotifier {
   ModelTourCourse? _modelTourCourseMy;
 
@@ -78,12 +80,17 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
     ModelTourItem? modelTourItem = await getTourItemFromPlace(modelPlace);
 
-    if (modelTourItem != null && getIsExistAlready(modelTourItem) == false) {
+    if (modelTourItem != null) {
       addModelTourItem(modelTourItem, isNotify: true);
     }
   }
 
-  addModelTourItem(ModelTourItem modelTourItem, {bool isNotify = true, bool isChangeWithServer = true}) {
+  Future<ResultAddTourItemType> addModelTourItem(ModelTourItem modelTourItem,
+      {bool isNotify = true, bool isChangeWithServer = true}) async {
+    if (getIsExistAlready(modelTourItem)) {
+      return ResultAddTourItemType.already;
+    }
+
     //마지막날에 추가
     int day = 0;
 
@@ -106,20 +113,31 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
     _modelTourCourseMy!.listModelTourItem[day].add(modelTourItem);
 
-    //내 장바구니에 추가
-    changeTourCourseWithServer();
-
     if (isNotify) {
       notifyListeners();
     }
+
+    if (isChangeWithServer) {
+      //내 장바구니에 추가
+      bool isSuccess = await changeTourCourseWithServer();
+      if (isSuccess) {
+        return ResultAddTourItemType.ok;
+      } else {
+        return ResultAddTourItemType.error;
+      }
+    } else {
+      return ResultAddTourItemType.yet;
+    }
   }
 
-  addListModelTourItem(List<List<ModelTourItem>> listModelTourItem, {bool isNotify = true}) {
+  addListModelTourItem(List<List<ModelTourItem>> listModelTourItem, {bool isNotify = true}) async {
     for (var element in listModelTourItem) {
       for (var element2 in element) {
         addModelTourItem(element2, isNotify: false, isChangeWithServer: false);
       }
     }
+
+    await changeTourCourseWithServer();
 
     if (isNotify) {
       notifyListeners();
@@ -172,7 +190,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
     changeTourCourseWithServer();
   }
 
-  changeTourCourseWithServer({TourCourseStateType? tourCourseStateType}) async {
+  Future<bool> changeTourCourseWithServer({TourCourseStateType? tourCourseStateType}) async {
     assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
 
     List<Map<String, dynamic>> listTourItems = [];
@@ -211,18 +229,30 @@ class ProviderTourCourseCart extends ChangeNotifier {
       //로그인 성공
       if (response[keyResult] == keyOk) {
         MyApp.logger.d("코스 변경에 성공했습니다.");
+        return true;
       } else {
         MyApp.logger.wtf("관광지 생성에 실패했습니다.");
+        return false;
       }
     } catch (e) {
       //오류 발생
-      MyApp.logger.wtf("관광지 생성에 실패 : ${e.toString()}");
+      MyApp.logger.wtf("코스 변경에 실패 : ${e.toString()}");
+      return false;
     }
   }
 
   clearProvider() {
     _modelTourCourseMy = null;
     notifyListeners();
+  }
+
+  int countAllTourItemInCart() {
+    int result = 0;
+    _modelTourCourseMy?.listModelTourItem.forEach((element) {
+      result += element.length;
+    });
+
+    return result;
   }
 
   ModelTourCourse? get modelTourCourseMy => _modelTourCourseMy;
