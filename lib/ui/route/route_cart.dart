@@ -97,7 +97,7 @@ class _RouteCartState extends State<RouteCart> {
   }
 
   changeTourCourseState() async {
-    if (MyApp.providerCourseCartMy.modelTourCourseMy!.listModelTourItem.isEmpty) {
+    if (MyApp.providerCourseCartMy.countAllTourItemInCart()==0) {
       showSnackBarOnRoute('코스가 비었어요.');
       return;
     }

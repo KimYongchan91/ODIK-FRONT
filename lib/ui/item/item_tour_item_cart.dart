@@ -9,6 +9,8 @@ import 'package:odik/ui/route/route_tour_item_detail.dart';
 import 'package:odik/ui/screen/screen_main_map.dart';
 
 import '../../my_app.dart';
+import '../../service/provider/provider_tour_course_cart.dart';
+import '../../service/util/util_snackbar.dart';
 
 const double _sizeImagePlace = 60;
 
@@ -18,7 +20,7 @@ class ItemTourItemForCart extends StatelessWidget {
   final ModelTourItem modelTourItem;
   final ButtonAddCartType buttonAddCartType;
 
-  const ItemTourItemForCart({required this.modelTourItem, required this.buttonAddCartType,  super.key});
+  const ItemTourItemForCart({required this.modelTourItem, required this.buttonAddCartType, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,9 @@ class ItemTourItemForCart extends StatelessWidget {
                       imageUrl: modelTourItem.listUrlImage.isNotEmpty ? modelTourItem.listUrlImage.first : '',
                       width: _sizeImagePlace,
                       height: _sizeImagePlace,
-                      errorWidget: (context, url, error) => Center(child: Icon(Icons.no_photography),),
+                      errorWidget: (context, url, error) => Center(
+                        child: Icon(Icons.no_photography),
+                      ),
                       fit: BoxFit.cover,
                     ),
                     Expanded(
@@ -60,16 +64,27 @@ class ItemTourItemForCart extends StatelessWidget {
                       ),
                     ),
                     Visibility(
-                      visible:  buttonAddCartType != ButtonAddCartType.invisible,
+                      visible: buttonAddCartType != ButtonAddCartType.invisible,
                       child: InkWell(
-                        onTap: () {
-                          MyApp.providerCourseCartMy.addModelTourItem(modelTourItem,isNotify: true);
+                        onTap: () async {
+                          ResultAddTourItemType resultAddTourItemType = await MyApp.providerCourseCartMy
+                              .addModelTourItem(modelTourItem, isNotify: true);
+
+                          switch (resultAddTourItemType) {
+                            case ResultAddTourItemType.ok:
+                              showSnackBarOnRoute(messageCompleteAddTourItem);
+                            case ResultAddTourItemType.already:
+                              showSnackBarOnRoute(messageAlreadyExistInCart);
+                            case ResultAddTourItemType.error:
+                              showSnackBarOnRoute(messageServerError);
+                            case ResultAddTourItemType.yet:
+                          }
                         },
                         child: Padding(
                           padding: EdgeInsets.all(5),
                           child: Icon(
                             Icons.card_travel,
-                            color:  buttonAddCartType == ButtonAddCartType.add? colorPrimary : Colors.grey,
+                            color: buttonAddCartType == ButtonAddCartType.add ? colorPrimary : Colors.grey,
                           ),
                         ),
                       ),

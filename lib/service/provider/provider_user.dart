@@ -124,9 +124,9 @@ class ProviderUser extends ChangeNotifier {
     //로컬에 저장
     if (isSaveOnLocal && this.modelUser != null) {
       try {
-        MyApp.logger.d("마지막 정보 저장 : ${this.modelUser!.toJson(isEncodeDateTime: true).toString()}");
+        MyApp.logger.d("마지막 정보 저장 : ${this.modelUser!.toJson(isIncludeIdx: true,isEncodeDateTime: true).toString()}");
         await flutterSecureStorage.write(
-            key: keyUserLastLogin, value: jsonEncode(this.modelUser!.toJson(isEncodeDateTime: true)));
+            key: keyUserLastLogin, value: jsonEncode(this.modelUser!.toJson(isIncludeIdx: true,isEncodeDateTime: true)));
       } catch (e) {
         MyApp.logger.wtf('데이터 로컬 저장 오류 발생 : ${e.toString()}');
       }

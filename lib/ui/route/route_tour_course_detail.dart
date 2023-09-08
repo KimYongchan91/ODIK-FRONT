@@ -71,28 +71,28 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () async {
-                    await MyApp.providerCourseCartMy
-                        .addListModelTourItem(widget.modelTourCourse.listModelTourItem, isNotify: true);
-
-                    showSnackBarOnRoute(messageCompleteAddTourItem);
-                  },
-                  child: Row(
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: valueNotifierIsLike,
-                        builder: (context, value, child) => InkWell(
-                          onTap: _changeIsLike,
-                          child: Icon(
-                            value ? Icons.favorite : Icons.favorite_border,
-                            size: 36,
-                            color: colorPrimary,
-                          ),
+                Row(
+                  children: [
+                    ValueListenableBuilder(
+                      valueListenable: valueNotifierIsLike,
+                      builder: (context, value, child) => InkWell(
+                        onTap: _changeIsLike,
+                        child: Icon(
+                          value ? Icons.favorite : Icons.favorite_border,
+                          size: 36,
+                          color: colorPrimary,
                         ),
                       ),
-                      Spacer(),
-                      Container(
+                    ),
+                    Spacer(),
+                    InkWell(
+                      onTap: () async {
+                        await MyApp.providerCourseCartMy
+                            .addListModelTourItem(widget.modelTourCourse.listModelTourItem, isNotify: true);
+
+                        showSnackBarOnRoute(messageCompleteAddTourItem);
+                      },
+                      child: Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -117,11 +117,11 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                  ],
                 ),
 
                 ///관광지 아이템 리스트뷰
