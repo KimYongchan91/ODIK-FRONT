@@ -49,7 +49,13 @@ class _ScreenMainState extends State<ScreenMainMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Center(
+      child: Text(
+        '임시로 비활성화 합니다.',
+        style: CustomTextStyle.largeBlackBold().copyWith(color: Colors.red),
+      ),
+    );
+    /*return Stack(
       children: [
         ///전체 화면 지도
         Positioned.fill(
@@ -61,9 +67,9 @@ class _ScreenMainState extends State<ScreenMainMap> {
             onMapCreated: (controller) async {
               googleMapController = controller;
 
-              /* String val = "json/google_map_dark_light.json";
+              */ /* String val = "json/google_map_dark_light.json";
               var c = await rootBundle.loadString(val);
-              _controller.setMapStyle(c);*/
+              _controller.setMapStyle(c);*/ /*
             },
             onTap: (argument) {
               FocusManager.instance.primaryFocus?.unfocus();
@@ -322,11 +328,11 @@ class _ScreenMainState extends State<ScreenMainMap> {
                                 ),
                               ),
                             ),
-                            /*Container(
+                            */ /*Container(
 
 
 
-                              ),*/
+                              ),*/ /*
                           ),
                           const SizedBox(
                             width: 10,
@@ -343,7 +349,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
               : Container(),
         ),
       ],
-    );
+    );*/
   }
 
   ///자동 완성

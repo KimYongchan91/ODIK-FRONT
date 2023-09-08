@@ -7,9 +7,11 @@ import 'package:odik/const/model/place/model_place.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/util/util_snackbar.dart';
 import 'package:odik/service/util/util_tour_course.dart';
+import 'package:odik/ui/item/item_history_search_keyword.dart';
 import 'package:odik/ui/item/item_place.dart';
 import 'package:odik/ui/item/item_tour_course.dart';
 
+import '../../const/model/model_history_search_keyword.dart';
 import '../../const/model/model_tour_course.dart';
 import '../../const/model/place/model_place_auto_complete.dart';
 import '../../const/value/key.dart';
@@ -32,10 +34,21 @@ class RouteSearch extends StatefulWidget {
 
 class _RouteSearchState extends State<RouteSearch> {
   final TextEditingController textEditingControllerKeyword = TextEditingController();
+  final ValueNotifier<List<ModelHistorySearchKeyword>> valueNotifierListModelHistorySearchKeyword =
+      ValueNotifier([]);
 
   final ValueNotifier<String?> valueNotifierKeyword = ValueNotifier(null);
   final ValueNotifier<List<ModelTourCourse>> valueNotifierListModelTourCourse = ValueNotifier([]);
   final ValueNotifier<List<ModelPlace>> valueNotifierModelPlace = ValueNotifier([]);
+
+  @override
+  void initState() {
+    super.initState();
+
+    MyApp.providerSQL.getAllHistory().then((value) {
+      valueNotifierListModelHistorySearchKeyword.value = value;
+    });
+  }
 
   @override
   void dispose() {
@@ -62,12 +75,19 @@ class _RouteSearchState extends State<RouteSearch> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      suffixIcon: InkWell(
+                      prefixIcon: InkWell(
                         onTap: () {
                           _search(textEditingControllerKeyword.text);
                         },
                         child: const Icon(Icons.search),
                       ),
+                      suffixIcon: InkWell(
+                        onTap: () {
+                          _clearKeyword();
+                        },
+                        child: Icon(Icons.close),
+                      ),
+
                       hintText: '어디로 떠나 볼까요?',
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 5,
@@ -121,12 +141,30 @@ class _RouteSearchState extends State<RouteSearch> {
                         )
 
                       ///검색  전
-                      : const Column(
+                      : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               '최근 검색어',
                               style: CustomTextStyle.bigBlackBold(),
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable: valueNotifierListModelHistorySearchKeyword,
+                              builder: (context, value, child) => ListView.builder(
+                                itemCount: value.length,
+                                itemBuilder: (context, index) => ItemHistorySearchKeyword(
+                                  value[index],
+                                  onTapeKeyword: (){
+                                    _search(value[index].keyword,isChangeTextEditingControl: true);
+                                  },
+                                  onTapDeleteKeyword: () {
+                                    _deleteKeyword(value[index].keyword);
+                                  },
+
+                                ),
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                              ),
                             ),
                           ],
                         ),
@@ -139,19 +177,41 @@ class _RouteSearchState extends State<RouteSearch> {
     );
   }
 
-  _search(String keyword) {
+  _clearKeyword(){
+    textEditingControllerKeyword.text = '';
+    valueNotifierKeyword.value =null;
+    valueNotifierModelPlace.value=[];
+    valueNotifierListModelTourCourse.value = [];
+  }
+
+  _deleteKeyword(String keyword) async {
+    await MyApp.providerSQL.deleteKeyword(keyword);
+
+    MyApp.providerSQL.getAllHistory().then((value) {
+      valueNotifierListModelHistorySearchKeyword.value = value;
+    });
+  }
+
+  _search(String keyword,{bool isChangeTextEditingControl = false}) {
+    if (keyword.isEmpty || keyword.trim().isEmpty) {
+      showSnackBarOnRoute('검색어를 입력해 주세요.');
+      return;
+    }
+
+    if(isChangeTextEditingControl){
+      textEditingControllerKeyword.text = keyword;
+    }
+
     _searchCourseFromOdikApi(keyword);
     _searchPlaceFromGoogleMapApi(keyword);
+    MyApp.providerSQL.addKeyword(keyword);
   }
 
   _searchCourseFromOdikApi(String keyword) async {
     FocusManager.instance.primaryFocus?.unfocus();
     valueNotifierKeyword.value = keyword;
 
-    if (keyword.isEmpty || keyword.trim().isEmpty) {
-      showSnackBarOnRoute('검색어를 입력해 주세요.');
-      return;
-    }
+
 
     ///odik api 사용 부분
     String keywordFormatted = keyword.trim().replaceAll("  ", " ");
@@ -214,10 +274,7 @@ class _RouteSearchState extends State<RouteSearch> {
     List listData = dataNewStr["results"];
     //MyApp.logger.d("원본 리스트 개수 : ${listData.length}");
 
-
-
     for (var element in listData) {
-
       List<String> listUrlImage = [];
 
       dynamic photos = element?['photos'];
@@ -236,9 +293,8 @@ class _RouteSearchState extends State<RouteSearch> {
         }
       }
 
-
       String? type;
-      List typesBody = (element?['types']??[]) as List;
+      List typesBody = (element?['types'] ?? []) as List;
       for (var element in typesBody) {
         if (mapPlaceType.keys.contains(element)) {
           type = element;
@@ -262,7 +318,7 @@ class _RouteSearchState extends State<RouteSearch> {
       );
 
       MyApp.logger.d(modelPlace.toString());
-    listModelPlace.add(modelPlace);
+      listModelPlace.add(modelPlace);
 /*
       ModelPlaceAutoComplete modelPlaceAutoComplete = ModelPlaceAutoComplete(
           title: element["structured_formatting"]["main_text"], referenceId: element['reference']);
@@ -270,7 +326,6 @@ class _RouteSearchState extends State<RouteSearch> {
     }
 
     valueNotifierModelPlace.value = listModelPlace;
-
   }
 
 /*_showDetailModelPlaceAutoComplete(ModelPlaceAutoComplete modelPlaceAutoComplete) async {
