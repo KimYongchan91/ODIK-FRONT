@@ -22,7 +22,6 @@ import '../util/util_tour_item.dart';
 class ProviderTourCourseCart extends ChangeNotifier {
   ModelTourCourse? _modelTourCourseMy;
 
-
   getCart() async {
     //장바구니 불러오기
     MyApp.logger.d("장바구니 불러오기 실행");
@@ -38,7 +37,6 @@ class ProviderTourCourseCart extends ChangeNotifier {
         _modelTourCourseMy = ModelTourCourse.fromJson(response[keyTourCourse]);
 
         changeTourCourseTitle(_modelTourCourseMy!.title, isNotify: false);
-
 
         notifyListeners();
 
@@ -58,17 +56,7 @@ class ProviderTourCourseCart extends ChangeNotifier {
     }
   }
 
-  addPlace(ModelPlace modelPlace, {bool isNotify = true}) async {
-    if (MyApp.providerUser.modelUser == null) {
-      showSnackBarOnRoute(messageNeedLogin);
-      return;
-    }
-
-    assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
-
-
-    ModelTourItem? modelTourItem = await getTourItemFromPlace(modelPlace);
-
+  bool getIsExistAlready(ModelTourItem modelTourItem) {
     bool isExistAlready = false;
     for (var element in _modelTourCourseMy!.listModelTourItem) {
       if (element.contains(modelTourItem)) {
@@ -77,40 +65,61 @@ class ProviderTourCourseCart extends ChangeNotifier {
       }
     }
 
-    if (modelTourItem != null && isExistAlready == false) {
-      //마지막날에 추가
-      int day = 0;
+    return isExistAlready;
+  }
 
-      loop1:
-      for (int i = 0; i < _modelTourCourseMy!.listModelTourItem.length; i++) {
-        bool isEmptyButThis = true;
+  addPlace(ModelPlace modelPlace, {bool isNotify = true}) async {
+    if (MyApp.providerUser.modelUser == null) {
+      showSnackBarOnRoute(messageNeedLogin);
+      return;
+    }
 
-        loop2:
-        for (int j = i + 1; j < _modelTourCourseMy!.listModelTourItem.length; j++) {
-          if (_modelTourCourseMy!.listModelTourItem[j].isNotEmpty) {
-            isEmptyButThis = false;
-            break loop2;
-          }
-        }
-        if (isEmptyButThis) {
-          day = i;
-          break loop1;
-        }
-      }
+    assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
 
-      _modelTourCourseMy!.listModelTourItem[day].add(modelTourItem);
-      //새로고침
-      notifyListeners();
+    ModelTourItem? modelTourItem = await getTourItemFromPlace(modelPlace);
 
-      //내 장바구니에 추가
-      changeTourCourseWithServer();
+    if (modelTourItem != null && getIsExistAlready(modelTourItem) == false) {
+      addModelTourItem(modelTourItem, isNotify: true);
     }
   }
 
-  _addModelTourItem(ModelTourItem modelTourItem, int day, int level, {bool isNotify = true}) {
-    MyApp.logger.d(
-        "_addModelTourItem _listModelTourItem.length : ${_modelTourCourseMy!.listModelTourItem.length}, day : ${day}, level : ${level}");
+  addModelTourItem(ModelTourItem modelTourItem, {bool isNotify = true, bool isChangeWithServer = true}) {
+    //마지막날에 추가
+    int day = 0;
+
+    loop1:
+    for (int i = 0; i < _modelTourCourseMy!.listModelTourItem.length; i++) {
+      bool isEmptyButThis = true;
+
+      loop2:
+      for (int j = i + 1; j < _modelTourCourseMy!.listModelTourItem.length; j++) {
+        if (_modelTourCourseMy!.listModelTourItem[j].isNotEmpty) {
+          isEmptyButThis = false;
+          break loop2;
+        }
+      }
+      if (isEmptyButThis) {
+        day = i;
+        break loop1;
+      }
+    }
+
     _modelTourCourseMy!.listModelTourItem[day].add(modelTourItem);
+
+    //내 장바구니에 추가
+    changeTourCourseWithServer();
+
+    if (isNotify) {
+      notifyListeners();
+    }
+  }
+
+  addListModelTourItem(List<List<ModelTourItem>> listModelTourItem, {bool isNotify = true}) {
+    for (var element in listModelTourItem) {
+      for (var element2 in element) {
+        addModelTourItem(element2, isNotify: false, isChangeWithServer: false);
+      }
+    }
 
     if (isNotify) {
       notifyListeners();
@@ -165,7 +174,6 @@ class ProviderTourCourseCart extends ChangeNotifier {
 
   changeTourCourseWithServer({TourCourseStateType? tourCourseStateType}) async {
     assert(_modelTourCourseMy != null, '_modelTourCourseMy == null');
-
 
     List<Map<String, dynamic>> listTourItems = [];
     for (int i = 0; i < _modelTourCourseMy!.listModelTourItem.length; i++) {

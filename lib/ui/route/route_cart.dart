@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 
 import '../../my_app.dart';
 import '../item/item_tour_item_cart.dart';
+import '../widget/listview_tour_item_In_tour_course.dart';
 
 class RouteCart extends StatefulWidget {
   const RouteCart({super.key});
@@ -74,72 +75,14 @@ class _RouteCartState extends State<RouteCart> {
                 ),
 
                 ///일정 상세 영역
-                Consumer<ProviderTourCourseCart>(
-                  builder: (context, provider, child) {
-                    return ListView.builder(
-                      itemCount: provider.modelTourCourseMy!.listModelTourItem.length,
-                      itemBuilder: (context, index) {
-                        //뒤에 필요 없는 일차는 제거
-                        bool isDummy = true;
+                const ListViewTourItemInTourCourse(),
 
-                        for (int i = index; i < provider.modelTourCourseMy!.listModelTourItem.length; i++) {
-                          if (provider.modelTourCourseMy!.listModelTourItem[i].isNotEmpty) {
-                            isDummy = false;
-                            break;
-                          }
-                        }
-
-                        if (isDummy) {
-                          return Container();
-                        }
-
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(top: index == 0 ? 10 : 30, left: 10, right: 10, bottom: 10),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    '${index + 1}일차',
-                                    style: const CustomTextStyle.normalBlueBold(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ListView.separated(
-                              itemCount: provider.modelTourCourseMy!.listModelTourItem[index].length,
-                              itemBuilder: (context, index2) => ItemTourItemForCart(
-                                provider.modelTourCourseMy!.listModelTourItem[index][index2],
-                              ),
-                              separatorBuilder: (context, index2) =>
-                                  index2 != provider.modelTourCourseMy!.listModelTourItem[index].length - 1
-                                      ? ItemDirection(
-                                          modelTourItemOrigin: provider.modelTourCourseMy!.listModelTourItem[index][index2],
-                                          modelTourItemOriginDestination: provider.modelTourCourseMy!.listModelTourItem[index]
-                                              [index2 + 1],
-                                          directionType: DirectionType.car,
-                                        )
-                                      : Container(),
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                            )
-                          ],
-                        );
-                      },
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                    );
-                  },
-                ),
-
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ButtonStandard(
                     onTap: changeTourCourseState,
                     label: '공개하기',

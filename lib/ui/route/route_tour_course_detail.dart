@@ -49,47 +49,78 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
             value: MyApp.providerCourseCartMy,
           )
         ],
-        builder: (context, child) =>
-            SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-              Text(
-              '${widget.modelTourCourse.title}',
-                style: CustomTextStyle.largeBlackBold(),
-              ),
-              InkWell(
-                onTap: () {
-                  Get.to(() => RouteListTourCourse(widget.modelTourCourse.modelUserCore));
-                },
-                child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Text(
-                    '${widget.modelTourCourse.modelUserCore.nickName}',
-                    style: CustomTextStyle.bigBlackBold().copyWith(color: Colors.blueAccent),
+        builder: (context, child) => SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${widget.modelTourCourse.title}',
+                  style: const CustomTextStyle.largeBlackBold(),
+                ),
+                InkWell(
+                  onTap: () {
+                    Get.to(() => RouteListTourCourse(widget.modelTourCourse.modelUserCore));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      '${widget.modelTourCourse.modelUserCore.nickName}',
+                      style: const CustomTextStyle.bigBlackBold().copyWith(color: Colors.blueAccent),
+                    ),
                   ),
                 ),
-              ),
-              ValueListenableBuilder(
-                valueListenable: valueNotifierIsLike,
-                builder: (context, value, child) =>
-                    InkWell(
-                      onTap: _changeIsLike,
-                      child: Icon(
-                        value ? Icons.favorite : Icons.favorite_border,
-                        size: 36,
-                        color: colorPrimary,
+                InkWell(
+                  onTap: (){
+                    MyApp.providerCourseCartMy.addListModelTourItem(widget.modelTourCourse.listModelTourItem,isNotify: true);
+                  },
+                  child: Row(
+                    children: [
+                      ValueListenableBuilder(
+                        valueListenable: valueNotifierIsLike,
+                        builder: (context, value, child) => InkWell(
+                          onTap: _changeIsLike,
+                          child: Icon(
+                            value ? Icons.favorite : Icons.favorite_border,
+                            size: 36,
+                            color: colorPrimary,
+                          ),
+                        ),
                       ),
-                    ),
-              ),
+                      Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: colorPrimary,
+                            width: 1.5,
+                          )
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.card_travel,color: colorPrimary,),
+                            SizedBox(width: 10,),
+                            Text('모두 담기',style: CustomTextStyle.normalBlackBold().copyWith(color: colorPrimary),),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 10,),
+                    ],
+                  ),
+                ),
 
-              ///관광지 아이템 리스트뷰
-              ListViewTourItemInTourCourse(modelTourCourseOther: widget.modelTourCourse,),
-
+                ///관광지 아이템 리스트뷰
+                ListViewTourItemInTourCourse(
+                  modelTourCourseOther: widget.modelTourCourse,
+                ),
               ],
             ),
+          ),
+        ),
       ),
-    ),);
+    );
   }
 
   //좋아요 수정

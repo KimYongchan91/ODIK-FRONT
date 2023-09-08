@@ -58,7 +58,12 @@ class ListViewTourItemInTourCourse extends StatelessWidget {
                 ListView.separated(
                   itemCount: modelTourCourse.listModelTourItem[index].length,
                   itemBuilder: (context, index2) => ItemTourItemForCart(
-                    modelTourCourse.listModelTourItem[index][index2],
+                    modelTourItem: modelTourCourse.listModelTourItem[index][index2],
+                    buttonAddCartType: modelTourCourseOther == null
+                        ? ButtonAddCartType.invisible
+                        : provider.getIsExistAlready(modelTourCourse.listModelTourItem[index][index2])
+                            ? ButtonAddCartType.already
+                            : ButtonAddCartType.add,
                   ),
                   separatorBuilder: (context, index2) =>
                       index2 != modelTourCourse.listModelTourItem[index].length - 1
