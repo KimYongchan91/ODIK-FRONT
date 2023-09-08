@@ -5,6 +5,7 @@ import 'package:odik/const/model/model_tour_course.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/ui/route/route_list_tour_course.dart';
 import 'package:odik/ui/screen/screen_main_map.dart';
+import 'package:odik/ui/widget/listview_tour_item_In_tour_course.dart';
 import 'package:provider/provider.dart';
 
 import '../../const/model/place/model_direction.dart';
@@ -48,12 +49,13 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
             value: MyApp.providerCourseCartMy,
           )
         ],
-        builder:  (context, child) => SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        builder: (context, child) =>
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               Text(
-                '${widget.modelTourCourse.title}',
+              '${widget.modelTourCourse.title}',
                 style: CustomTextStyle.largeBlackBold(),
               ),
               InkWell(
@@ -70,22 +72,24 @@ class _RouteTourCourseDetailState extends State<RouteTourCourseDetail> {
               ),
               ValueListenableBuilder(
                 valueListenable: valueNotifierIsLike,
-                builder: (context, value, child) => InkWell(
-                  onTap: _changeIsLike,
-                  child: Icon(
-                    value ? Icons.favorite : Icons.favorite_border,
-                    size: 36,
-                    color: colorPrimary,
-                  ),
-                ),
+                builder: (context, value, child) =>
+                    InkWell(
+                      onTap: _changeIsLike,
+                      child: Icon(
+                        value ? Icons.favorite : Icons.favorite_border,
+                        size: 36,
+                        color: colorPrimary,
+                      ),
+                    ),
               ),
 
+              ///관광지 아이템 리스트뷰
+              ListViewTourItemInTourCourse(modelTourCourseOther: widget.modelTourCourse,),
 
-            ],
-          ),
-        ),
+              ],
+            ),
       ),
-    );
+    ),);
   }
 
   //좋아요 수정

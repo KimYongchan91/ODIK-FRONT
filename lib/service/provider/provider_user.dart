@@ -81,7 +81,7 @@ class ProviderUser extends ChangeNotifier {
       MyApp.logger.wtf("modelUser==null");
       return;
     }
-    MyApp.logger.d("jobAfterLogin 동작");
+    //MyApp.logger.d("jobAfterLogin 동작");
     MyApp.providerCourseCartMy.getCart();
     MyApp.providerCoursePublicMy.setModelUserCore(modelUser!);
     MyApp.providerCoursePublicMy.getAllTourCourse();
