@@ -6,6 +6,7 @@ import '../../const/value/key.dart';
 import '../../const/value/test.dart';
 import '../../my_app.dart';
 
+///modelPlace를 이용해 ModelTourItem 반환
 Future<ModelTourItem?> getTourItemFromPlace(ModelPlace modelPlace) async {
   //먼저 있나 조회
   ModelTourItem? modelTourItem = await getTourItemFromReferenceIdGoogle(modelPlace.referenceId);
@@ -27,7 +28,8 @@ Future<ModelTourItem?> getTourItemFromPlace(ModelPlace modelPlace) async {
   }
 }
 
-getTourItemFromReferenceIdGoogle(String referenceId) async {
+///구글 ref id를 이용해 ModelTourItem 반환
+Future<ModelTourItem?> getTourItemFromReferenceIdGoogle(String referenceId) async {
   //관광지
   //log("카트에 추가되는 정보 : ${modelPlace.toJson()}");
 

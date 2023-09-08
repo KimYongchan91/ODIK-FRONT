@@ -381,7 +381,7 @@ class _ScreenMainState extends State<ScreenMainMap> {
       return unicode;
     });
 
-    //MyApp.logger.d("응답 결과 : $newStr");
+    MyApp.logger.d("응답 결과 : $newStr");
 
     Map<String, dynamic> dataNewStr = jsonDecode(newStr);
     List listData = dataNewStr["predictions"];
@@ -393,31 +393,6 @@ class _ScreenMainState extends State<ScreenMainMap> {
       listPlaceAutoComplete.add(modelPlaceAutoComplete);
     }
 
-    //MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.length}");
-    //MyApp.logger.d("결과 리스트 개수 : ${listPlaceAutoComplete.toString()}");
-
-    ///odik api 사용 부분
-    String keywordFormatted = keyword.trim().replaceAll("  ", " ");
-
-    String urlOdikApi = "$urlBase/tour/course?keyword=$keywordFormatted&order=like"; //todo 김용찬 order 수정
-    String urlOdikApiEncoded = Uri.encodeFull(urlOdikApi);
-    MyApp.logger.d("urlOdikApiEncoded : $urlOdikApiEncoded");
-    Map data = {};
-
-/*    try {
-      Map<String, dynamic> response = await requestHttpStandard(urlOdikApi, data);
-      MyApp.logger.d("관광지 생성 응답결과 : ${response.toString()}");
-
-      //로그인 성공
-      if (response[keyResult] == keyOk) {
-        MyApp.logger.d("관광지 생성에 성공했습니다.");
-      } else {
-        MyApp.logger.wtf("관광지 생성에 실패했습니다.");
-      }
-    } catch (e) {
-      //오류 발생
-      MyApp.logger.wtf("관광지 생성에 실패 : ${e.toString()}");
-    }*/
     return listPlaceAutoComplete;
   }
 
