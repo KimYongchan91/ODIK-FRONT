@@ -52,11 +52,14 @@ class _RouteCartState extends State<RouteCartModify> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Text(
-                      '코스 제목',
-                      style: CustomTextStyle.normalBlack(),
-                    )),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Text(
+                    '코스 제목',
+                    style: CustomTextStyle.normalBlack(),
+                  ),
+                ),
+
+
                 Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -79,70 +82,81 @@ class _RouteCartState extends State<RouteCartModify> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Consumer<ProviderTourCourseCart>(
-                    builder: (context, provider, child) {
-                      List<List<ModelTourItem>> listListModelTourItem = [...provider.modelTourCourseMy!.listModelTourItem];
-                      for (int i = 0; i < countTourCourseDayMax - listListModelTourItem.length; i++) {
-                        listListModelTourItem.add([]);
-                      }
 
-                      return DragAndDropLists(
-                        children: [
-                          ...listListModelTourItem.asMap().entries.map(
-                            (entry) {
-                              return DragAndDropList(
-                                header: Container(
-                                  constraints: const BoxConstraints(
-                                    maxHeight: 120,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                '${entry.key + 1}일차',
-                                                style: const CustomTextStyle.normalBlackBold()
-                                                    .copyWith(color: Colors.redAccent),
-                                              ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Text(
+                    '코스 제목',
+                    style: CustomTextStyle.normalBlack(),
+                  ),
+                ),
+
+
+                Consumer<ProviderTourCourseCart>(
+                  builder: (context, provider, child) {
+                    List<List<ModelTourItem>> listListModelTourItem = [
+                      ...provider.modelTourCourseMy!.listModelTourItem
+                    ];
+                    for (int i = 0; i < countTourCourseDayMax - listListModelTourItem.length; i++) {
+                      listListModelTourItem.add([]);
+                    }
+
+                    return DragAndDropLists(
+                      children: [
+                        ...listListModelTourItem.asMap().entries.map(
+                          (entry) {
+                            return DragAndDropList(
+                              header: Container(
+                                constraints: const BoxConstraints(
+                                  maxHeight: 120,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              '${entry.key + 1}일차',
+                                              style: const CustomTextStyle.normalBlackBold()
+                                                  .copyWith(color: Colors.redAccent),
                                             ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                children: [
-                                  ...entry.value
-                                      .map((e) => DragAndDropItem(child: ItemTourItemForCartModify(e))),
-                                ],
-                                contentsWhenEmpty: Container(),
-                                canDrag: true,
-                              );
-                            },
-                          )
-                        ],
-                        onItemReorder: provider.onItemReorder,
-                        onListReorder: provider.onListReorder,
-                        scrollController: scrollController,
-                        contentsWhenEmpty: Container(),
+                              ),
+                              children: [
+                                ...entry.value
+                                    .map((e) => DragAndDropItem(child: ItemTourItemForCartModify(e))),
+                              ],
+                              contentsWhenEmpty: Container(),
+                              canDrag: true,
+                            );
+                          },
+                        )
+                      ],
+                      onItemReorder: provider.onItemReorder,
+                      onListReorder: provider.onListReorder,
+                      scrollController: scrollController,
+                      contentsWhenEmpty: Container(),
+
 /*                    separatorBuilder: (context, index) => index != provider.listModelTourItem.length - 1
-                            ? ItemDirection(
-                                modelTourItemOrigin: provider.listModelTourItem[index],
-                                modelTourItemOriginDestination: provider.listModelTourItem[index + 1],
-                                directionType: DirectionType.car, //todo 김용찬 DirectionType 기본값
-                              )
-                            : Container(),
-                        itemCount: provider.listModelTourItem.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),*/
-                      );
-                    },
-                  ),
+                          ? ItemDirection(
+                              modelTourItemOrigin: provider.listModelTourItem[index],
+                              modelTourItemOriginDestination: provider.listModelTourItem[index + 1],
+                              directionType: DirectionType.car, //todo 김용찬 DirectionType 기본값
+                            )
+                          : Container(),
+                      itemCount: provider.listModelTourItem.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),*/
+                    );
+                  },
                 )
               ],
             ),
