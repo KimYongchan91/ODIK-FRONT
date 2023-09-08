@@ -241,9 +241,12 @@ class ProviderTourCourseCart extends ChangeNotifier {
     }
   }
 
-  clearProvider() {
+  clearProvider({bool isNotify = true}) {
     _modelTourCourseMy = null;
-    notifyListeners();
+
+    if(isNotify){
+      notifyListeners();
+    }
   }
 
   int countAllTourItemInCart() {

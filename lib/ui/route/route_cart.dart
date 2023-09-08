@@ -112,7 +112,7 @@ class _RouteCartState extends State<RouteCart> {
           .changeTourCourseWithServer(tourCourseStateType: TourCourseStateType.public);
 
       //카트 초기화
-      MyApp.providerCourseCartMy.clearProvider();
+      MyApp.providerCourseCartMy.clearProvider(isNotify: false);
 
       //카트 받아오기
       MyApp.providerCourseCartMy.getCart();

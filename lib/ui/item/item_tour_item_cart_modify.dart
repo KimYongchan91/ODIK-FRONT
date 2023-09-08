@@ -31,7 +31,7 @@ class ItemTourItemForCartModify extends StatelessWidget {
                 children: [
                   CachedNetworkImage(
                     imageUrl: modelTourItem.listUrlImage.isNotEmpty ? modelTourItem.listUrlImage.first : '',
-                    errorWidget: (context, url, error) => Center(
+                    errorWidget: (context, url, error) => const Center(
                       child: Icon(Icons.no_photography),
                     ),
                     width: _sizeImagePlace,
