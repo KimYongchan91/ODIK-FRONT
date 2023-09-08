@@ -30,7 +30,10 @@ class ItemTourItemForCartModify extends StatelessWidget {
               Row(
                 children: [
                   CachedNetworkImage(
-                    imageUrl: modelTourItem.listUrlImage.first,
+                    imageUrl: modelTourItem.listUrlImage.isNotEmpty ? modelTourItem.listUrlImage.first : '',
+                    errorWidget: (context, url, error) => Center(
+                      child: Icon(Icons.no_photography),
+                    ),
                     width: _sizeImagePlace,
                     height: _sizeImagePlace,
                     fit: BoxFit.cover,
@@ -39,9 +42,9 @@ class ItemTourItemForCartModify extends StatelessWidget {
                     child: Column(
                       children: [
                         InkWell(
-                          onTap: ()  async{
+                          onTap: () async {
                             var result = await Get.dialog(const DialogDeleteTourItemForCart());
-                            if(result == true){
+                            if (result == true) {
                               MyApp.providerCourseCartMy.deleteModelTourItem(modelTourItem);
                             }
                           },

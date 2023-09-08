@@ -80,7 +80,7 @@ class ItemPlace extends StatelessWidget {
                   width: _sizeImageGoogleMap,
                   height: _sizeImageGoogleMap,
                   fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  errorWidget: (context, url, error) => Center(child: Icon(Icons.no_photography),),
                   placeholder: (context, url) => Center(
                     child: LoadingAnimationWidget.inkDrop(
                       color: colorPrimary,

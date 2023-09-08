@@ -43,6 +43,7 @@ class ItemTourItemForCart extends StatelessWidget {
                       imageUrl: modelTourItem.listUrlImage.isNotEmpty ? modelTourItem.listUrlImage.first : '',
                       width: _sizeImagePlace,
                       height: _sizeImagePlace,
+                      errorWidget: (context, url, error) => Center(child: Icon(Icons.no_photography),),
                       fit: BoxFit.cover,
                     ),
                     Expanded(
