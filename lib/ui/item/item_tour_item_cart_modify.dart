@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_place.dart';
@@ -7,6 +8,7 @@ import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/ui/dialog/dialog_delete_tour_item_for_cart.dart';
 
 import '../../my_app.dart';
+import '../../service/util/util_string.dart';
 
 const double _sizeImagePlace = 60;
 
@@ -29,6 +31,12 @@ class ItemTourItemForCartModify extends StatelessWidget {
             children: [
               Row(
                 children: [
+                  Icon(
+                    FontAwesomeIcons.gripLines,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
                   CachedNetworkImage(
                     imageUrl: modelTourItem.listUrlImage.isNotEmpty ? modelTourItem.listUrlImage.first : '',
                     errorWidget: (context, url, error) => const Center(
@@ -41,28 +49,35 @@ class ItemTourItemForCartModify extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        InkWell(
-                          onTap: () async {
-                            var result = await Get.dialog(const DialogDeleteTourItemForCart());
-                            if (result == true) {
-                              MyApp.providerCourseCartMy.deleteModelTourItem(modelTourItem);
-                            }
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Icon(Icons.delete),
-                          ),
+
+
+                        Text(
+                          modelTourItem.title,
+                          style: const CustomTextStyle.normalBlackBold(),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
                         Text(
-                          modelTourItem.title,
+                          getFormattedAddress(modelTourItem.address??'')  ,
                           style: const CustomTextStyle.normalBlackBold(),
                         ),
                       ],
                     ),
-                  )
+                  ),
+
+                  InkWell(
+                    onTap: () async {
+                      var result = await Get.dialog(const DialogDeleteTourItemForCart());
+                      if (result == true) {
+                        MyApp.providerCourseCartMy.deleteModelTourItem(modelTourItem);
+                      }
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Icon(Icons.delete),
+                    ),
+                  ),
                 ],
               ),
             ],

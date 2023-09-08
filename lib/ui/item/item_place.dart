@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_place.dart';
+import 'package:odik/service/util/util_string.dart';
 import 'package:odik/ui/route/route_tour_item_detail.dart';
 
 import '../../custom/custom_text_style.dart';
@@ -34,6 +35,7 @@ class ItemPlace extends StatelessWidget {
         padding: EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ///제목
             Row(
@@ -46,7 +48,11 @@ class ItemPlace extends StatelessWidget {
 
               ],
             ),
-
+            ///주소
+            Text(
+              getFormattedAddress(modelPlace.address??''),
+              style: const CustomTextStyle.normalBlack(),
+            ),
             ///별점 영역
             Row(
               children: [

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/const/model/place/model_place.dart';
 import 'package:odik/custom/custom_text_style.dart';
+import 'package:odik/service/util/util_string.dart';
 import 'package:odik/ui/dialog/dialog_delete_tour_item_for_cart.dart';
 import 'package:odik/ui/route/route_tour_item_detail.dart';
 import 'package:odik/ui/screen/screen_main_map.dart';
@@ -45,20 +46,28 @@ class ItemTourItemForCart extends StatelessWidget {
                       imageUrl: modelTourItem.listUrlImage.isNotEmpty ? modelTourItem.listUrlImage.first : '',
                       width: _sizeImagePlace,
                       height: _sizeImagePlace,
-                      errorWidget: (context, url, error) => Center(
+                      errorWidget: (context, url, error) => const Center(
                         child: Icon(Icons.no_photography),
                       ),
                       fit: BoxFit.cover,
                     ),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     Expanded(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            modelTourItem.title,
+                            style: const CustomTextStyle.normalBlackBold(),
+                          ),
                           const SizedBox(
                             height: 10,
                           ),
                           Text(
-                            modelTourItem.title,
-                            style: const CustomTextStyle.normalBlackBold(),
+                            getFormattedAddress(modelTourItem.address ?? ''),
+                            style: const CustomTextStyle.normalBlack(),
                           ),
                         ],
                       ),
@@ -81,7 +90,7 @@ class ItemTourItemForCart extends StatelessWidget {
                           }
                         },
                         child: Padding(
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: Icon(
                             Icons.card_travel,
                             color: buttonAddCartType == ButtonAddCartType.add ? colorPrimary : Colors.grey,
