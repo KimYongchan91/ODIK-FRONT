@@ -48,50 +48,51 @@ class _RouteCartState extends State<RouteCartModify> {
             ChangeNotifierProvider.value(value: MyApp.providerCourseCartMy),
           ],
           builder: (context, child) => SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
+            child: CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                const SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Text(
-                    '코스 제목',
-                    style: CustomTextStyle.normalBlack(),
-                  ),
-                ),
-
-
-                Consumer<ProviderTourCourseCart>(
-                  builder: (context, provider, child) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Focus(
-                      child: CustomTextField(
-                        controller: textEditingControllerTitle,
-                      ),
-                      onFocusChange: (value) {
-                        if (value) {
-                        } else {
-                          //포커스 잃음
-                          //MyApp.logger.d("포커스 잃음");
-                          //기존 title과 비교
-                          if (provider.modelTourCourseMy?.title != textEditingControllerTitle.text) {
-                            provider.changeTourCourseTitle(textEditingControllerTitle.text, isNotify: true);
-                            provider.changeTourCourseWithServer();
-                          }
-                        }
-                      },
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      '코스 제목',
+                      style: CustomTextStyle.normalBlack(),
                     ),
                   ),
                 ),
-
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Text(
-                    '코스 제목',
-                    style: CustomTextStyle.normalBlack(),
+                SliverToBoxAdapter(
+                  child: Consumer<ProviderTourCourseCart>(
+                    builder: (context, provider, child) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Focus(
+                        child: CustomTextField(
+                          controller: textEditingControllerTitle,
+                        ),
+                        onFocusChange: (value) {
+                          if (value) {
+                          } else {
+                            //포커스 잃음
+                            //MyApp.logger.d("포커스 잃음");
+                            //기존 title과 비교
+                            if (provider.modelTourCourseMy?.title != textEditingControllerTitle.text) {
+                              provider.changeTourCourseTitle(textEditingControllerTitle.text, isNotify: true);
+                              provider.changeTourCourseWithServer();
+                            }
+                          }
+                        },
+                      ),
+                    ),
                   ),
                 ),
-
-
+                const SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      '코스 제목',
+                      style: CustomTextStyle.normalBlack(),
+                    ),
+                  ),
+                ),
                 Consumer<ProviderTourCourseCart>(
                   builder: (context, provider, child) {
                     List<List<ModelTourItem>> listListModelTourItem = [
@@ -144,8 +145,8 @@ class _RouteCartState extends State<RouteCartModify> {
                       onListReorder: provider.onListReorder,
                       scrollController: scrollController,
                       contentsWhenEmpty: Container(),
-
-/*                    separatorBuilder: (context, index) => index != provider.listModelTourItem.length - 1
+                      sliverList: true,
+/*                     separatorBuilder: (context, index) => index != provider.listModelTourItem.length - 1
                           ? ItemDirection(
                               modelTourItemOrigin: provider.listModelTourItem[index],
                               modelTourItemOriginDestination: provider.listModelTourItem[index + 1],
