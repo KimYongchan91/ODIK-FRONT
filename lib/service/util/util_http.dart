@@ -7,24 +7,28 @@ import '../../const/value/key.dart';
 import '../../my_app.dart';
 
 final Pattern patternDecodeUnicode = RegExp(r'\\u([0-9A-Fa-f]{4})');
-final Map<String, String> headerStandard = {"Content-Type": "application/json"};
+final Map<String, String> headerContentTypeJson = {"Content-Type": "application/json"};
+final Map<String, String> headerContentTypeMultipart = {"Content-Type": "multipart/form-data"};
 
 enum MethodType { get, post, put, delete }
 
 typedef GetResponse = Future<http.Response> Function();
 
-Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData,
-    {Map<String, String>? headerCustom,
-    bool isIncludeModeHeaderCustom = true,
-    bool isNeedDecodeUnicode = false,
-    MethodType methodType = MethodType.post}) async {
+Future<Map<String, dynamic>> requestHttpStandard(
+  String url,
+  Map requestBodyData, {
+  Map<String, String>? headerCustom,
+  bool isIncludeModeHeaderCustom = true,
+  bool isNeedDecodeUnicode = false,
+  MethodType methodType = MethodType.post,
+}) async {
   //body를 string으로 인코드
   String requestBody = json.encode(requestBodyData);
 
   //데이터를 보낼 url
   //String url = 'https://odik.link/auth/email_verify/verify';
 
-  Map<String, String> header = {...headerStandard};
+  Map<String, String> header = {...headerContentTypeJson};
   if (MyApp.providerUser.modelUser != null) {
     header[keyAuthorization] = 'Bearer ${MyApp.providerUser.modelUser!.tokenOdik}';
   }
@@ -41,7 +45,7 @@ Future<Map<String, dynamic>> requestHttpStandard(String url, Map requestBodyData
 
   MyApp.logger.d(""
       "요청 url : $url\n"
-      "요청 method : ${methodType.toString().replaceAll("MethodType.","")}\n"
+      "요청 method : ${methodType.toString().replaceAll("MethodType.", "")}\n"
       "요청 header : $header\n"
       "요청 body : $requestBody");
 

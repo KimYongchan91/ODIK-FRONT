@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:odik/const/model/model_tour_item.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/util/util_snackbar.dart';
+import 'package:odik/ui/sheet/sheet_review_new.dart';
 import 'package:provider/provider.dart';
 
 import '../../my_app.dart';
@@ -52,10 +54,10 @@ class _RouteTourItemDetailState extends State<RouteTourItemDetail> {
                   children: [
                     InkWell(
                       onTap: () async {
-                        ResultAddTourItemType resultAddTourItemType =  await MyApp.providerCourseCartMy
+                        ResultAddTourItemType resultAddTourItemType = await MyApp.providerCourseCartMy
                             .addModelTourItem(widget.modelTourItem, isNotify: true, isChangeWithServer: true);
 
-                        switch(resultAddTourItemType){
+                        switch (resultAddTourItemType) {
                           case ResultAddTourItemType.ok:
                             showSnackBarOnRoute(messageCompleteAddTourItem);
                           case ResultAddTourItemType.already:
@@ -63,10 +65,7 @@ class _RouteTourItemDetailState extends State<RouteTourItemDetail> {
                           case ResultAddTourItemType.error:
                             showSnackBarOnRoute(messageServerError);
                           case ResultAddTourItemType.yet:
-
                         }
-
-
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -99,13 +98,24 @@ class _RouteTourItemDetailState extends State<RouteTourItemDetail> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text(
-                  '리뷰',
-                  style: CustomTextStyle.normalBlackBold(),
+                Row(
+                  children: [
+                    const Text(
+                      '리뷰',
+                      style: CustomTextStyle.normalBlackBold(),
+                    ),
+                    Spacer(),
+                    InkWell(
+                      onTap: () {
+                        Get.bottomSheet(SheetReviewNew());
+                      },
+                      child: const Text(
+                        '새 리뷰 작성',
+                        style: CustomTextStyle.normalBlackBold(),
+                      ),
+                    ),
+                  ],
                 ),
-                /* Consumer<ProviderReviewTourItem>(
-                  builder: (context, value, child) => ListView.builder(itemBuilder: ,),
-                ),*/
               ],
             ),
           ),

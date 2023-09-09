@@ -1,14 +1,27 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:odik/const/value/image.dart';
+import 'package:odik/const/value/key.dart';
+import 'package:odik/const/value/test.dart';
 import 'package:odik/const/value/tour_course.dart';
 import 'package:odik/custom/custom_text_field.dart';
 import 'package:odik/custom/custom_text_style.dart';
 import 'package:odik/service/provider/provider_tour_course_cart.dart';
+import 'package:odik/service/util/util_http.dart';
 import 'package:odik/ui/item/item_tour_item_cart_modify.dart';
+import 'package:odik/ui/screen/screen_main_map.dart';
 import 'package:provider/provider.dart';
 
 import '../../const/model/model_tour_item.dart';
 import '../../my_app.dart';
+import '../../service/util/util_permission.dart';
+import '../../service/util/util_snackbar.dart';
 
 class RouteCartModify extends StatefulWidget {
   const RouteCartModify({super.key});
@@ -20,6 +33,8 @@ class RouteCartModify extends StatefulWidget {
 class _RouteCartState extends State<RouteCartModify> {
   final ScrollController scrollController = ScrollController();
   final TextEditingController textEditingControllerTitle = TextEditingController();
+  final ImagePicker imagePicker = ImagePicker();
+  final ImageCropper imageCropper = ImageCropper();
 
   @override
   void initState() {
@@ -84,12 +99,35 @@ class _RouteCartState extends State<RouteCartModify> {
                     ),
                   ),
                 ),
-                const SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      '코스 제목',
-                      style: CustomTextStyle.normalBlack(),
+                Consumer<ProviderTourCourseCart>(
+                  builder: (context, value, child) => SliverToBoxAdapter(
+                    child: Container(
+                      height: sizeTourCourseCoverImageHeight,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      child: value.modelTourCourseMy?.imageCover == null
+                          ? Stack(
+                              children: [
+                                Center(
+                                  child: InkWell(
+                                    onTap: addCoverImage,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [Icon(Icons.add), Text('커버 사진 추가')],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: value.modelTourCourseMy!.imageCover!,
+                            ),
                     ),
                   ),
                 ),
@@ -165,5 +203,79 @@ class _RouteCartState extends State<RouteCartModify> {
         ),
       ),
     );
+  }
+
+  addCoverImage() async {
+    bool isPermissionGranted = await requestPermission(RequestPermissionType.photo);
+    if (isPermissionGranted == false) {
+      return;
+    }
+
+    XFile? xfile = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (xfile == null) {
+      showSnackBarOnRoute(messageEmptySelectedImage);
+      return;
+    }
+
+    CroppedFile? croppedFile;
+
+    try {
+      croppedFile = await imageCropper.cropImage(
+        sourcePath: xfile.path,
+        //aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: '커버 이미지 자르기',
+            toolbarColor: colorPrimary,
+            toolbarWidgetColor: Colors.white,
+            //initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false,
+            hideBottomControls: false,
+          ),
+          IOSUiSettings(
+            title: '커버 이미지 자르기',
+            doneButtonTitle: '완료',
+            cancelButtonTitle: '취소',
+            rotateButtonsHidden: true,
+            rotateClockwiseButtonHidden: true,
+            resetButtonHidden: true,
+            aspectRatioPickerButtonHidden: true,
+            aspectRatioLockDimensionSwapEnabled: true,
+            aspectRatioLockEnabled: true,
+          ),
+        ],
+      );
+    } on Exception catch (e) {
+      MyApp.logger.d("이미지 자르는데 실패 ${e.toString()}");
+    }
+
+    if (croppedFile == null) {
+      showSnackBarOnRoute(messageEmptySelectedImage);
+      return;
+    }
+
+    //서버로 전송
+    Uint8List bytes = File(croppedFile.path).readAsBytesSync();
+
+    Map<String, String> header = headerContentTypeMultipart;
+    String url = '$urlBase/file';
+    Map<String, dynamic> body = {
+      keyCategory: keyTourCourse,
+      keyIdx: MyApp.providerCourseCartMy.modelTourCourseMy?.idx ?? 0,
+      keyImages: [
+        bytes,
+      ],
+    };
+
+    final response = await requestHttpStandard(
+      url,
+      body,
+      methodType: MethodType.post,
+      headerCustom: header,
+      isIncludeModeHeaderCustom: false,
+      isNeedDecodeUnicode: false,
+    );
+
+    MyApp.logger.d("파일 전송 결과 : ${response.toString()}");
   }
 }

@@ -1,1 +1,1 @@
-const double sizeTourCourseCoverImageHeight = 120;
+const double sizeTourCourseCoverImageHeight = 160;

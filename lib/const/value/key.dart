@@ -32,6 +32,7 @@ const String keyUser = 'user';
 
 const String keyIdx = "idx";
 const String keyTitle = "title";
+const String keyImageCover = "image_cover";
 const String keyReferenceIdGoogle = "reference_id_google";
 const String keyType = "type";
 const String keyPointGoogle = "point_google";
@@ -73,3 +74,11 @@ const String keyDay = "day";
 const String keyLevel = "level";
 
 const String keyLike = 'like';
+
+//file
+const String keyCategory = 'category';
+const String keyReviewTourCourse = 'review_tour_course';
+const String keyReviewTourItem = 'review_tour_item';
+const String keyImages = 'images';
+
+

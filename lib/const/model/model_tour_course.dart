@@ -11,6 +11,7 @@ class ModelTourCourse {
   final int idx;
   String title;
   final ModelUserCore modelUserCore;
+  final String? imageCover;
   final DateTime dateTimeCreate;
   final DateTime? dateTimeModify;
   final TourCourseStateType tourCourseStateType;
@@ -24,6 +25,7 @@ class ModelTourCourse {
       : idx = json[keyIdx] ?? 0,
         title = json[keyTitle] ?? '',
         modelUserCore = ModelUserCore.fromJson(json[keyUser] ?? {}),
+        imageCover = json[keyImageCover],
         dateTimeCreate = getDateTimeFromDynamicData(json[keyDateCreate]) ?? DateTime.now(),
         dateTimeModify = getDateTimeFromDynamicData(json[keyDateModify]),
 
